@@ -23,6 +23,14 @@ const router = createRouter({
 		  {
 			path: '/myhome',
 			component: () => import('../views/MyHome.vue')
+		  },
+		  {
+			path: '/mySpaces',
+			component: () => import('../views/MySpaces.vue')
+		  },
+		  {
+			path: '/requestAdministration',
+			component: () => import('../views/RequestAdministration.vue')
 		  }
 	],
 })

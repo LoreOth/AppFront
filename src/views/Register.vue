@@ -17,6 +17,10 @@
         <label for="password">Contraseña</label>
         <input type="password" id="password" name="password" v-model="input.password" placeholder="Contraseña" />
       </div>
+      <div class="form-inputs">
+      <label for="rol">Administrador de espacio obligado?</label>
+      <input type="checkbox" id="rol" name="rol" v-model="input.rol" />
+    </div>
       <button type="button" v-on:click="register">Register</button>
     </div>
   </template>
@@ -26,13 +30,14 @@
     name: 'RegisterPage',
     data() {
       return {
-        input: {
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: ""
-        }
-      }
+    input: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      rol: false // Default value for the checkbox
+    }
+  }
     },
     methods: {
       register() {
@@ -41,7 +46,8 @@
           firstName: this.input.firstname,
           lastName: this.input.lastname,
           email: this.input.email,
-          password: this.input.password
+          password: this.input.password,
+          rol:this.input.rol ?  "REPRE_EO" : "USER"
         };
         // Realizar la solicitud HTTP POST
         fetch('http://localhost:8080/register/save', {

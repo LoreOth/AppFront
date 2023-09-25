@@ -16,7 +16,7 @@
 				<span class="material-icons">home</span>
 				<span class="text">Home</span>
 			</router-link>
-			<router-link to="/MyHome" class="button">
+			<router-link v-if="userRoles.includes('ROLE_ADMIN','REPRE_EO')" to="/MyHome" class="button">
 				<span class="material-icons">description</span>
 				<span class="text">Perfil</span>
 			</router-link>
@@ -24,14 +24,31 @@
 				<span class="material-icons">group</span>
 				<span class="text">Solicitudes</span>
 			</router-link>
-			<router-link to="/register" class="button">
-				<span class="material-icons">login</span>
-				<span class="text">Registrarse</span>
+			<router-link v-if="!userRoles.includes('ROLE_ADMIN','REPRE_EO')" to="/register" class="button">
+  <span class="material-icons">login</span>
+  <span class="text">Registrarse</span>
+</router-link>
+<router-link v-if="!userRoles.includes('ROLE_ADMIN','REPRE_EO')" to="/login" class="button">
+  <span class="material-icons">login</span>
+  <span class="text">Iniciar Sesión</span>
+</router-link>
+			<router-link v-if="userRoles.includes('REPRE_EO')"  to="/mySpaces" class="button">
+				<span class="material-icons">group</span>
+				<span class="text">Mis espacios</span>
 			</router-link>
-			<router-link to="/login" class="button">
-				<span class="material-icons">login</span>
-				<span class="text">Iniciar Sesión</span>
+			<router-link v-if="userRoles.includes('REPRE_EO')"  to="/requestAdministration" class="button">
+				<span class="material-icons">description</span>
+				<span class="text">Solicitar administración</span>
 			</router-link>
+			<router-link v-if="userRoles.includes('ROLE_ADMIN','REPRE_EO')" to="/" class="button" @click="ToggleLogoutPopup">
+    <span class="material-icons">logout</span>
+    <div v-if="showLogoutPopup" class="logout-popup">
+        <p class="logout-message">¿Estás seguro de que deseas cerrar sesión?</p>
+        <button @click="handleLogout">Sí, cerrar sesión</button>
+        <button @click="showLogoutPopup = false">Cancelar</button>
+    </div>
+    <span class="text">Cerrar Sesión</span>
+</router-link>
 			<router-link to="/contact" class="button">
 				<span class="material-icons">email</span>
 				<span class="text">Contact</span>
@@ -66,6 +83,19 @@ const fetchUserRoles = () => {
 const ToggleMenu = () => {
     is_expanded.value = !is_expanded.value;
     localStorage.setItem("is_expanded", is_expanded.value);
+
+}
+
+const showLogoutPopup = ref(false);
+
+const ToggleLogoutPopup = () => {
+  showLogoutPopup.value = !showLogoutPopup.value;
+};
+
+const handleLogout = () => {
+  showLogoutPopup.value = false;
+  userSessionManager.clearSession();
+  // Realizar cualquier otra acción necesaria al cerrar sesión
 }
 
 onMounted(fetchUserRoles);
@@ -216,5 +246,9 @@ aside {
 		position: absolute;
 		z-index: 99;
 	}
+	.logout-message {
+    font-size: 0.875rem;
+    color: var(--grey);
+}
 }
 </style>
