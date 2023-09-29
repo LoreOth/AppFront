@@ -49,6 +49,7 @@
         <span class="text">Iniciar Sesión</span>
       </router-link>
       <router-link
+      v-if="userRoles.includes('ROLE_ADMIN', 'REPRE_EO')"
         to="/spaces"
         class="button"
       >
