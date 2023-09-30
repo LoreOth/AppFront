@@ -25,14 +25,15 @@
 
     <!-- Formulario para la entidad, inicialmente oculto -->
     <div v-if="showEntityForm">
-      <!-- Asumiendo que el formulario de entidad tiene campos como nombre, provincia y cuit -->
       <div class="form-inputs">
         <label>Nombre:</label>
         <input type="text" v-model="newEntity.name" />
         <label>Provincia:</label>
-        <input type="text" v-model="newEntity.province" />
+        <select v-model="newEntity.province">
+          <option v-for="province in provinces" :key="province">{{ province }}</option>
+        </select>
         <label>CUIT:</label>
-        <input type="text" v-model="newEntity.CUIT" />
+        <input type="text" v-model="newEntity.cuit" />
         <button @click="cancelEntityForm">Cancelar</button>
         <button @click="submitEntity">Enviar</button>
       </div>
@@ -63,42 +64,47 @@
       <div class="form-inputs" v-if="showSedeForm">
         <label>Nombre:</label>
         <input type="text" v-model="newSede.name" />
-        <label>Provincia:</label>
-        <input type="text" v-model="newSede.province" />
-        <label>Estado:</label>
-        <input type="text" v-model="newSede.estado" readonly />
-        <!-- Hice este campo de solo lectura porque asumí que no querrías que los usuarios lo cambien. Si quieres que lo cambien, simplemente quita el atributo readonly. -->
+        <label>CUIT:</label>
+        <input type="text" v-model="newSede.cuit" />
         <button @click="submitSede">Crear Sede</button>
       </div>
     </div>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import UserSessionManager from "../UserSessionManager";
+
 export default {
   data() {
     return {
-      representativeId: null,
-      spaces: [], // Lista de espacios obtenidos del back
+      spaces: [],
+      selectedSpace: null,
       showEntityForm: false,
+      showSedeForm: false,
       newEntity: {
-        name: "",
-        province: "",
-        CUIT: "",
+        name: '',
+        province: '',
+        cuit: '',
       },
-      selectedSpace: null, // Espacio seleccionado para mostrar sedes
-      showSedeForm: false, // Añade esta línea
       newSede: {
-        name: "",
-        province: "",
-        estado: "pendiente",
+        name: '',
+        cuit: '',
       },
+      provinces: ['Buenos Aires', 'Córdoba', 'Santa Fe', 'Mendoza', 'Tucumán', 'Entre Ríos', 'Salta', 'Chaco', 'Corrientes', 'Santiago del Estero', 'Jujuy', 'San Juan', 'Río Negro', 'Formosa', 'Neuquén', 'Chubut', 'San Luis', 'Catamarca', 'La Rioja', 'La Pampa', 'Santa Cruz', 'Tierra del Fuego', 'Misiones'],
     };
   },
   methods: {
     cancelEntityForm() {
       this.showEntityForm = false;
+    },
+    showSuccessNotification(message) {
+      this.showNotification = true;
+      this.notificationMessage = message;
+      setTimeout(() => {
+        this.showNotification = false;
+        this.notificationMessage = "";
+      }, 2000);
     },
     fetchSpaces() {
       fetch("http://localhost:8080/obligatory-spaces")
@@ -109,14 +115,12 @@ export default {
           return response.json();
         })
         .then((data) => {
-          // Transformar los datos aquí
           this.spaces = data.map((space) => ({
             ...space,
             estado: space.status ? "Aprobado" : "Pendiente",
             cuit: space.cuit,
           }));
         })
-
         .catch((error) => {
           console.log(
             "There was a problem with the fetch operation:",
@@ -126,7 +130,7 @@ export default {
     },
     fetchSedes(space) {
       console.log(space);
-      this.selectedSpace = space; // Establece el espacio seleccionado
+      this.selectedSpace = space;
       fetch(`http://localhost:8080/campus/${space.id}/sedes`)
         .then((response) => {
           if (!response.ok) {
@@ -140,33 +144,29 @@ export default {
             ...sede,
             estado: sede.approved ? true : false,
           }));
+      
+          console.log("this.selectedSpace.sedes"+this.selectedSpace.sedes)
         })
         .catch((error) => {
           console.log("There was a problem fetching sedes:", error.message);
         });
-      console.log("data " + data);
     },
     openEntityForm() {
       this.showEntityForm = true;
       this.showSedeForm = false;
     },
-
     openSedeForm() {
       this.showSedeForm = true;
     },
     submitSede() {
-      // Establecer el valor predeterminado de estado en false
       this.newSede.estado = false;
 
-      // Aquí puedes usar fetch para enviar la nueva sede al backend
       const dataToSend = {
         name: this.newSede.name,
-        province: this.newSede.province,
+        cuit: this.newSede.cuit,
         estado: this.newSede.estado,
         obligatorySpaceId: this.selectedSpace.id,
       };
-
-      // Resto del código para enviar los datos al backend
 
       fetch("http://localhost:8080/campus/create", {
         method: "POST",
@@ -182,9 +182,9 @@ export default {
           return response.json();
         })
         .then((data) => {
-          // Aquí puedes actualizar la lista de sedes o hacer cualquier otra cosa
           this.selectedSpace.sedes.push(data);
           this.showSedeForm = false;
+          this.$router.push({ name: 'campus', params: { id: this.selectedSpace.id } });
         })
         .catch((error) => {
           console.log(
@@ -193,17 +193,14 @@ export default {
           );
         });
     },
-
     submitEntity() {
-      // Primero verificamos si ya existe un espacio con ese CUIT
       fetch(
-        `http://localhost:8080/obligatory-spaces/cuit/${this.newEntity.CUIT}`
+        `http://localhost:8080/obligatory-spaces/cuit/${this.newEntity.cuit}`
       )
         .then((response) => {
           if (response.ok) {
             return response.json();
           } else if (response.status === 404) {
-            // Si el status es 404, significa que no existe el espacio obligado con ese CUIT
             return null;
           } else {
             throw new Error("Network response was not ok");
@@ -218,10 +215,9 @@ export default {
               name: this.newEntity.name,
               province: this.newEntity.province,
               representativeId: UserSessionManager.getSessionItem("id"),
-              cuit: this.newEntity.CUIT,
+              cuit: this.newEntity.cuit,
             };
-            console.log("json stri" + JSON.stringify(dataToSend));
-            // Si no hay data, procedemos a crear el espacio obligado
+
             fetch("http://localhost:8080/obligatory-spaces/create", {
               method: "POST",
               headers: {
@@ -236,9 +232,15 @@ export default {
                 return response.json();
               })
               .then((data) => {
-                // Aquí puedes hacer cualquier otra acción posterior a la creación, como resetear el formulario o actualizar la lista de espacios
-                this.fetchSpaces();
+                this.spaces.push(data);
                 this.showEntityForm = false;
+                this.$router.push({ name: 'campus', params: { id: data.id } });
+              })
+              .catch((error) => {
+                console.log(
+                  "There was a problem submitting the new entity:",
+                  error.message
+                );
               });
           }
         })

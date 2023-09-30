@@ -35,7 +35,13 @@ const router = createRouter({
 		  {
 			path: '/requestAdministration',
 			component: () => import('../views/RequestAdministration.vue')
+		  },
+		  {
+			path: '/campus',
+			name: 'campus',
+			component: () => import('../views/Campus.vue')
 		  }
+		  
 	],
 })
 
