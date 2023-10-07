@@ -5,9 +5,14 @@
             <div class="column">Nombre</div>
             <div class="column">Provincia</div>
         </div>
-        <div v-for="campus in campuses" :key="campus.id" class="row">
+        <div v-for="campus in campuses" :key="campus.id" class="row" @click="selectCampus(campus)">
             <div class="column">{{ campus.name }}</div>
             <div class="column">{{ campus.province }}</div>
+        </div>
+        <div v-if="selectedCampus" class="button-group">
+            <button @click="redirectToDEA">DEA</button>
+            <button>Otro botón</button>
+            <button>Otro botón</button>
         </div>
     </div>
 </template>
@@ -19,7 +24,8 @@
   export default {
 	data() {
 	  return {
-		campuses: []
+		campuses: [],
+		selectedCampus: null
 	  }
 	},
 	async mounted() {
@@ -37,12 +43,32 @@
 	  }
 	},
 	methods: {
-	  viewCampusDetails(campus) {
-		// Lógica para ver los detalles del campus seleccionado
-		// Ejemplo: navegar a una nueva página o abrir un modal con los detalles
-	  }
-	}
+    async fetchCampuses() {
+      const userId = UserSessionManager.getSessionItem("id");
+      const baseURL = "http://localhost:8080/campus/";
+      try {
+        const response = await fetch(`${baseURL}representatives/${userId}/campuses`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        this.campuses = await response.json();
+      } catch (error) {
+        console.error("Error fetching campuses", error);
+      }
+    },
+    selectCampus(campus) {
+      this.selectedCampus = campus;
+    },
+	redirectToDEA() {
+		console.log("this.selectedCampus.id" +this.selectedCampus.id)
+      if (this.selectedCampus && this.selectedCampus.id) {
+        this.$router.push({ name: 'Dea', params: { id: this.selectedCampus.id } });
+      } else {
+        console.error('No se ha seleccionado una sede o la sede seleccionada no tiene ID.');
+      }
+    }
   }
+}
   </script>
 <style>
 #spaces {
@@ -87,7 +113,9 @@
   box-sizing: border-box;
   font-size: 0.8rem;
 }
-
+.button-group button:not(:last-child) {
+  margin-right: 1rem; /* Ajusta este valor según la cantidad de espacio que desees */
+}
 button {
   padding: 10px 15px;
   background-color: #8e44ad;
