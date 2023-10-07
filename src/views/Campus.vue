@@ -9,38 +9,59 @@
       <input type="text" v-model="campusData.name" />
 
       <label>CUIT:</label>
-      <input type="text" v-model="campusData.CUIT" />
+      <input type="text" v-model="campusData.cuit" />
     
     </div>
-    <button @click="submitSede">Enviar</button>
+    <button @click="submitForm">Enviar</button>
   </div>
 </template>
   
 <script>
+import UserSessionManager from "../UserSessionManager";
 export default {
   data() {
     return {
       campusData: {
         name: "",
-        CUIT: "",
+        cuit: "",
+        representativeId: null, 
+        obligatorySpaceId: null 
       },
       spaceId: null,
     };
   },
   methods: {
-    altaDEA() {
-      // Aquí va la lógica cuando se haga click en "ALTA DEA"
-      alert("Alta DEA");
-    },
-    submitForm() {vvv
-      // Aquí puedes manejar la lógica de envío del formulario
-      console.log(this.campusData);
-    },
+    submitForm() {
+      
+      this.campusData.obligatorySpaceId = this.spaceId; // Establece el ID del espacio obligatorio
+      this.campusData.representativeId = UserSessionManager.getSessionItem("id"); // Establece el ID del representante
+  
+      
+      console.log("this.campusData.representativeId" + this.campusData.representativeId)
+
+
+      fetch("http://localhost:8080/campus/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.campusData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        // ... Manejo de la respuesta, por ejemplo, redireccionar o mostrar un mensaje ...
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      });
+    }
   },
   mounted() {
     this.spaceId = this.$route.params.id;
+    console.log("this.spaceId" + this.spaceId)
   },
 };
+
 </script>
   
   <style>
