@@ -28,6 +28,16 @@
       <button @click="saveData">Guardar</button>
       <button @click="cancel">Cancelar</button>
     </div>
+    <div v-if="deasAssigned.length > 0">
+    <h2>DEAs Asignados:</h2>
+    <ul>
+        <li v-for="dea in deasAssigned" :key="dea.id">
+            Marca: <span v-if="dea.brand">{{ dea.brand }}</span><span v-else>--</span>,
+            Modelo: <span v-if="dea.model">{{ dea.model }}</span><span v-else>--</span>,
+            Último mantenimiento: <span v-if="dea.dateMaintenance">{{ dea.dateMaintenance }}</span><span v-else>--</span>
+        </li>
+    </ul>
+</div>
   </div>
 </template>
   
@@ -39,6 +49,7 @@ export default {
       models: [],
       selectedBrandId: "",
       selectedBrandName: "",
+      deasAssigned: [],
     };
   },
   methods: {
@@ -110,9 +121,22 @@ export default {
         console.error("Error fetching models:", error);
       }
     },
+    async fetchAssignedDEAs() {
+    try {
+        const response = await fetch(`http://localhost:8080/campus/${this.$route.params.id}/deas`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        this.deasAssigned = await response.json();
+    } catch (error) {
+        console.error("Error fetching assigned DEAs:", error);
+    }
+}
+
   },
   mounted() {
     this.fetchBrands();
+    this.fetchAssignedDEAs();
   },
 };
 </script>

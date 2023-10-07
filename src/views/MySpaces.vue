@@ -10,7 +10,7 @@
             <div class="column">{{ campus.province }}</div>
         </div>
         <div v-if="selectedCampus" class="button-group">
-            <button @click="redirectToDEA">DEA</button>
+            <button @click="redirectToDEA">Gestión de DEAs</button>
             <button>Otro botón</button>
             <button>Otro botón</button>
         </div>
