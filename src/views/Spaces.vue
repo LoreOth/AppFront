@@ -30,7 +30,9 @@
         <input type="text" v-model="newEntity.name" />
         <label>Provincia:</label>
         <select v-model="newEntity.province">
-          <option v-for="province in provinces" :key="province">{{ province }}</option>
+          <option v-for="province in provinces" :key="province">
+            {{ province }}
+          </option>
         </select>
         <label>CUIT:</label>
         <input type="text" v-model="newEntity.cuit" />
@@ -50,14 +52,18 @@
         <div class="column">Estado</div>
       </div>
 
-      <!-- Listado de sedes -->
       <div v-for="sede in selectedSpace.sedes" :key="sede.id" class="row">
         <div class="column">{{ sede.name }}</div>
         <div class="column province">{{ sede.province }}</div>
-        <div class="column">{{ sede.estado ? "Aprobado" : "Pendiente" }}</div>
+        <div class="status-button-wrapper">
+          <div class="column estado-column">
+            {{ sede.estado ? "Aprobado" : "Pendiente" }}
+          </div>
+          <button class="sede-button" @click="representSede(sede)">
+            Representar
+          </button>
+        </div>
       </div>
-
-      <button @click="representSede">Representar Sede</button>
       <button @click="openSedeForm" v-if="selectedSpace">
         Crear Nueva Sede
       </button>
@@ -74,7 +80,6 @@
 
 <script>
 import UserSessionManager from "../UserSessionManager";
-
 export default {
   data() {
     return {
@@ -83,17 +88,42 @@ export default {
       showEntityForm: false,
       showSedeForm: false,
       newEntity: {
-        name: '',
-        province: '',
-        cuit: '',
+        name: "",
+        province: "",
+        cuit: "",
       },
       newSede: {
-        name: '',
-        cuit: '',
+        name: "",
+        cuit: "", 
       },
-      provinces: ['Buenos Aires', 'Córdoba', 'Santa Fe', 'Mendoza', 'Tucumán', 'Entre Ríos', 'Salta', 'Chaco', 'Corrientes', 'Santiago del Estero', 'Jujuy', 'San Juan', 'Río Negro', 'Formosa', 'Neuquén', 'Chubut', 'San Luis', 'Catamarca', 'La Rioja', 'La Pampa', 'Santa Cruz', 'Tierra del Fuego', 'Misiones'],
+      provinces: [
+        "Buenos Aires",
+        "Córdoba",
+        "Santa Fe",
+        "Mendoza",
+        "Tucumán",
+        "Entre Ríos",
+        "Salta",
+        "Chaco",
+        "Corrientes",
+        "Santiago del Estero",
+        "Jujuy",
+        "San Juan",
+        "Río Negro",
+        "Formosa",
+        "Neuquén",
+        "Chubut",
+        "San Luis",
+        "Catamarca",
+        "La Rioja",
+        "La Pampa",
+        "Santa Cruz",
+        "Tierra del Fuego",
+        "Misiones",
+      ],
     };
   },
+
   methods: {
     cancelEntityForm() {
       this.showEntityForm = false;
@@ -144,8 +174,8 @@ export default {
             ...sede,
             estado: sede.approved ? true : false,
           }));
-      
-          console.log("this.selectedSpace.sedes"+this.selectedSpace.sedes)
+
+          console.log("this.selectedSpace.sedes" + this.selectedSpace.sedes);
         })
         .catch((error) => {
           console.log("There was a problem fetching sedes:", error.message);
@@ -184,7 +214,10 @@ export default {
         .then((data) => {
           this.selectedSpace.sedes.push(data);
           this.showSedeForm = false;
-          this.$router.push({ name: 'campus', params: { id: this.selectedSpace.id } });
+          this.$router.push({
+            name: "campus",
+            params: { id: this.selectedSpace.id },
+          });
         })
         .catch((error) => {
           console.log(
@@ -234,7 +267,7 @@ export default {
               .then((data) => {
                 this.spaces.push(data);
                 this.showEntityForm = false;
-                this.$router.push({ name: 'campus', params: { id: data.id } });
+                this.$router.push({ name: "campus", params: { id: data.id } });
               })
               .catch((error) => {
                 console.log(
@@ -248,7 +281,7 @@ export default {
           console.log("Error:", error.message);
         });
     },
-    representSede() {
+    representSede(sede) {
       representativeId = UserSessionManager.getSessionItem("id");
     },
   },
@@ -259,6 +292,17 @@ export default {
 </script>
 
 <style>
+.sede-button {
+  padding: 4px 6px; /* Ajusta el padding del botón */
+  font-size: 0.7rem;
+  margin-left: 10px;
+  background-color: #8e44ad;
+  color: #ecf0f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 #spaces {
   display: flex;
   flex-direction: column;
@@ -315,7 +359,15 @@ button {
 button:hover {
   background-color: #9b59b6;
 }
-
+.status-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Esta propiedad empuja el botón hacia la derecha */
+  flex-grow: 1;
+}
+.estado-column {
+  flex-grow: 1.2; /* Ajustar este valor si es necesario */
+}
 .header-row,
 .row {
   display: flex;
@@ -327,8 +379,8 @@ button:hover {
 }
 
 .column {
-  flex: 1;
-  padding: 0 1rem;
+  flex: 1.2; /* Ajusta este valor para incrementar el espacio entre columnas */
+  padding: 0 1.5rem; /* Aumenta el padding para separar las columnas */
   text-align: center;
 }
 

@@ -1,6 +1,143 @@
 <template>
-	<main id="perfil-page">
-		<h1>Perfil</h1>
-		<p>This is the about page</p>
-	</main>
+    <div id="spaces">
+        <h1>Mis sedes</h1>
+        <div class="row header-row">
+            <div class="column">Nombre</div>
+            <div class="column">Provincia</div>
+        </div>
+        <div v-for="campus in campuses" :key="campus.id" class="row">
+            <div class="column">{{ campus.name }}</div>
+            <div class="column">{{ campus.province }}</div>
+        </div>
+    </div>
 </template>
+
+
+
+  <script>
+  import UserSessionManager from "../UserSessionManager";
+  export default {
+	data() {
+	  return {
+		campuses: []
+	  }
+	},
+	async mounted() {
+	  const userId = UserSessionManager.getSessionItem("id");
+	  const baseURL = "http://localhost:8080/campus/";
+  
+	  try {
+		const response = await fetch(`${baseURL}representatives/${userId}/campuses`);
+		if (!response.ok) {
+		  throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		this.campuses = await response.json();
+	  } catch (error) {
+		console.error("Error fetching campuses", error);
+	  }
+	},
+	methods: {
+	  viewCampusDetails(campus) {
+		// Lógica para ver los detalles del campus seleccionado
+		// Ejemplo: navegar a una nueva página o abrir un modal con los detalles
+	  }
+	}
+  }
+  </script>
+<style>
+#spaces {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 600px;
+  margin: 0 auto;
+  background-color: #2c3e50;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  padding: 2rem;
+}
+
+#spaces h1,
+#spaces h2 {
+  color: #ecf0f1;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+#spaces .form-inputs {
+  width: 100%;
+  max-width: 300px;
+  padding-bottom: 10px;
+}
+
+#spaces .form-inputs label {
+  display: block;
+  font-size: 0.8rem;
+  color: #bdc3c7;
+  margin-bottom: 0.5rem;
+}
+
+#spaces .form-inputs input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #8e44ad;
+  color: #ecf0f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #9b59b6;
+}
+
+.header-row,
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.column {
+  flex: 1;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.header-row .column {
+  font-weight: bold;
+  color: #bdc3c7;
+  border-bottom: 1px solid #bdc3c7;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.column.province {
+  white-space: nowrap;
+}
+
+.row .column {
+  color: #ecf0f1;
+  border-bottom: 1px solid #ecf0f1;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.row {
+  cursor: pointer;
+}
+</style>

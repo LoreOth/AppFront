@@ -49,7 +49,6 @@
         <span class="text">Iniciar Sesión</span>
       </router-link>
       <router-link
-      v-if="userRoles.includes('ROLE_ADMIN', 'REPRE_EO')"
         to="/spaces"
         class="button"
       >
@@ -57,7 +56,13 @@
         <span class="text">Espacios</span>
       </router-link>
       <router-link
-        v-if="userRoles.includes('REPRE_EO')"
+        to="/requests"
+        class="button"
+      >
+        <span class="material-icons">description</span>
+        <span class="text">Solicitudes</span>
+      </router-link>
+      <router-link
         to="/mySpaces"
         class="button"
       >
@@ -81,7 +86,7 @@
         <span class="material-icons">logout</span>
         <div v-if="showLogoutPopup" class="logout-popup">
           <p class="logout-message">
-            ¿Estás seguro de que deseas cerrar sesión?
+            ¿cerrar sesión?
           </p>
           <button @click="handleLogout">Sí, cerrar sesión</button>
           <button @click="showLogoutPopup = false">Cancelar</button>
