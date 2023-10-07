@@ -33,6 +33,11 @@ const router = createRouter({
 			component: () => import('../views/Requests.vue')
 		  },
 		  {
+			path: '/dea/:id',
+			name: 'Dea',
+			component: () => import('../views/DEA.vue')
+		  },
+		  {
 			path: '/spaces',
 			component: () => import('../views/Spaces.vue')
 		  },
