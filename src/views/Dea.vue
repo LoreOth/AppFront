@@ -176,10 +176,13 @@ export default {
 #deas h2 {
   color: #ecf0f1;
   margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1.0rem;
   font-weight: bold;
 }
-
+#deas ul li {
+  color: #ecf0f1;
+  font-size: 0.8rem;
+}
 #deas .form-inputs {
   width: 100%;
   max-width: 300px;
