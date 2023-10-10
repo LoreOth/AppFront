@@ -196,6 +196,7 @@ export default {
         cuit: this.newSede.cuit,
         estado: this.newSede.estado,
         obligatorySpaceId: this.selectedSpace.id,
+        representativeId : UserSessionManager.getSessionItem("id"),
       };
 
       fetch("http://localhost:8080/campus/create", {
