@@ -64,21 +64,20 @@ export default {
             return response.json();
           })
           .then((data) => {
-            console.log("data" + data)
-            if (data.email) {
+            if (data.error) {
+              console.log("Inicio de sesión fallido:", data.error);
+            } else if (data.data && data.data.email) {
+              // Nota el cambio aquí
               console.log("Inicio de sesión exitoso");
               this.$emit("authenticated", true);
-
-              // Almacenar datos en UserSessionManager
+              this.$store.dispatch('authenticate', true);
               UserSessionManager.setSessionData({
-                email: data.email,
-                roles: data.role,
-                id:data.id,
+                email: data.data.email, // Nota el cambio aquí
+                roles: data.data.roles, // Nota el cambio aquí
+                id: data.data.id, // Nota el cambio aquí
               });
               this.$router.push("/myhome");
               console.log(UserSessionManager.getSessionData());
-            } else {
-              console.log("Inicio de sesión fallido:", data.error);
             }
           })
           .catch((error) => {

@@ -2,8 +2,8 @@
   <div id="campus-form">
     <h1>Sede</h1>
     <div class="warning">
-      <p>**Para crear un espacio, es obligatorio asignar una sede.**</p>
-    </div>
+    <p>**Para crear un espacio, es obligatorio asignar una sede.**</p>
+</div>
     <div class="form-inputs">
       <label>Nombre:</label>
       <input type="text" v-model="campusData.name" />
@@ -28,10 +28,12 @@ export default {
         obligatorySpaceId: null 
       },
       spaceId: null,
+
     };
   },
   methods: {
     submitForm() {
+
       
       this.campusData.obligatorySpaceId = this.spaceId; // Establece el ID del espacio obligatorio
       this.campusData.representativeId = UserSessionManager.getSessionItem("id"); // Establece el ID del representante
@@ -49,7 +51,7 @@ export default {
       })
       .then(response => response.json())
       .then(data => {
-        // ... Manejo de la respuesta, por ejemplo, redireccionar o mostrar un mensaje ...
+        this.$router.push({ name: 'mySpaces' });
       })
       .catch(error => {
         console.error("Error:", error);
@@ -58,7 +60,6 @@ export default {
   },
   mounted() {
     this.spaceId = this.$route.params.id;
-    console.log("this.spaceId" + this.spaceId)
   },
 };
 

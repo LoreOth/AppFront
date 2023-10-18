@@ -32,40 +32,23 @@
         <span class="material-icons">group</span>
         <span class="text">Solicitudes</span>
       </router-link>
-      <router-link
-        v-if="!userRoles.includes('ROLE_ADMIN', 'REPRE_EO')"
-        to="/register"
-        class="button"
-      >
+      <router-link v-if="!isLoggedIn" to="/register" class="button">
         <span class="material-icons">login</span>
         <span class="text">Registrarse</span>
       </router-link>
-      <router-link
-        v-if="!userRoles.includes('ROLE_ADMIN', 'REPRE_EO')"
-        to="/login"
-        class="button"
-      >
+      <router-link v-if="!isLoggedIn" to="/login" class="button">
         <span class="material-icons">login</span>
         <span class="text">Iniciar Sesión</span>
       </router-link>
-      <router-link
-        to="/spaces"
-        class="button"
-      >
+      <router-link to="/spaces" class="button">
         <span class="material-icons">group</span>
         <span class="text">Espacios</span>
       </router-link>
-      <router-link
-        to="/requests"
-        class="button"
-      >
+      <router-link to="/requests" class="button">
         <span class="material-icons">description</span>
         <span class="text">Solicitudes</span>
       </router-link>
-      <router-link
-        to="/mySpaces"
-        class="button"
-      >
+      <router-link to="/mySpaces" class="button">
         <span class="material-icons">group</span>
         <span class="text">Mis espacios</span>
       </router-link>
@@ -78,16 +61,14 @@
         <span class="text">Solicitar administración</span>
       </router-link>
       <router-link
-        v-if="userRoles.includes('ROLE_ADMIN', 'REPRE_EO')"
+        v-if="isLoggedIn"
         to="/"
         class="button"
         @click="ToggleLogoutPopup"
       >
         <span class="material-icons">logout</span>
         <div v-if="showLogoutPopup" class="logout-popup">
-          <p class="logout-message">
-            ¿cerrar sesión?
-          </p>
+          <p class="logout-message">¿cerrar sesión?</p>
           <button @click="handleLogout">Sí, cerrar sesión</button>
           <button @click="showLogoutPopup = false">Cancelar</button>
         </div>
@@ -111,19 +92,27 @@
 </template>
 
 <script setup>
+
+
+
 import { ref, onMounted } from "vue";
 import logoURL from "../assets/logo.png";
 import userSessionManager from "../UserSessionManager";
 
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true");
 const userRoles = ref([]);
+const isLoggedIn = ref(false); 
 
 const fetchUserRoles = () => {
   const session = userSessionManager.getSessionData();
   if (session && session.roles) {
     userRoles.value = session.roles;
+    isLoggedIn.value = true;
+  } else {
+    isLoggedIn.value = false;
   }
 };
+
 const ToggleMenu = () => {
   is_expanded.value = !is_expanded.value;
   localStorage.setItem("is_expanded", is_expanded.value);
@@ -138,7 +127,7 @@ const ToggleLogoutPopup = () => {
 const handleLogout = () => {
   showLogoutPopup.value = false;
   userSessionManager.clearSession();
-  // Realizar cualquier otra acción necesaria al cerrar sesión
+  isLoggedIn.value = false;
 };
 
 onMounted(fetchUserRoles);

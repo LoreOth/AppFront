@@ -221,6 +221,7 @@ export default {
         .then((data) => {
           this.selectedSpace.sedes.push(data);
           this.showSedeForm = false;
+          console.log(this.showSedeForm)
           this.$router.push({
             name: "campus",
             params: { id: this.selectedSpace.id },
