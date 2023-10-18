@@ -40,15 +40,15 @@
         <span class="material-icons">login</span>
         <span class="text">Iniciar Sesión</span>
       </router-link>
-      <router-link to="/spaces" class="button">
+      <router-link  v-if="!userRoles.includes('ADMIN')" to="/spaces" class="button">
         <span class="material-icons">group</span>
         <span class="text">Espacios</span>
       </router-link>
-      <router-link to="/requests" class="button">
+      <router-link  v-if="userRoles.includes('ADMIN')" to="/requests" class="button">
         <span class="material-icons">description</span>
         <span class="text">Solicitudes</span>
       </router-link>
-      <router-link to="/mySpaces" class="button">
+      <router-link  v-if="!userRoles.includes('ADMIN')" to="/mySpaces" class="button">
         <span class="material-icons">group</span>
         <span class="text">Mis espacios</span>
       </router-link>
