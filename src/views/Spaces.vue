@@ -36,6 +36,10 @@
         </select>
         <label>CUIT:</label>
         <input type="text" v-model="newEntity.cuit" />
+        <div class="checkbox-wrapper">
+        <input type="checkbox" v-model="isUniqueEntity" id="uniqueEntityCheckbox"/>
+        <label for="uniqueEntityCheckbox" title="Seleccionar si es única entidad">Seleccionar si es única entidad</label>
+    </div>
         <button @click="cancelEntityForm">Cancelar</button>
         <button @click="submitEntity">Enviar</button>
       </div>
@@ -87,6 +91,7 @@ import UserSessionManager from "../UserSessionManager";
 export default {
   data() {
     return {
+      isUniqueEntity: false,
       spaces: [],
       selectedSpace: null,
       showEntityForm: false,
@@ -132,6 +137,32 @@ export default {
     cancelEntityForm() {
       this.showEntityForm = false;
     },
+    createSede(data) {
+  fetch("http://localhost:8080/campus/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (this.selectedSpace) {
+        this.selectedSpace.sedes.push(data);
+      }
+    })
+    .catch((error) => {
+      console.log(
+        "There was a problem submitting the new sede:",
+        error.message
+      );
+    });
+},
     showSuccessNotification(message) {
       this.showNotification = true;
       this.notificationMessage = message;
@@ -140,6 +171,7 @@ export default {
         this.notificationMessage = "";
       }, 2000);
     },
+    
     fetchSpaces() {
       fetch("http://localhost:8080/obligatory-spaces")
         .then((response) => {
@@ -177,7 +209,7 @@ export default {
       // Mapeo de datos para establecer el estado y la representación de cada sede.
       this.selectedSpace.sedes = data.map(sede => ({
         ...sede,
-        estado: sede.approved ? "Aprobado" : "Pendiente",
+        estado: sede.approved === 1 ? "Aprobado" : "Pendiente",
         isRepresented: localStorage.getItem(`sede-${sede.id}`) === "true" ? true : false
       }));
     })
@@ -223,8 +255,8 @@ export default {
           this.showSedeForm = false;
           console.log(this.showSedeForm)
           this.$router.push({
-            name: "campus",
-            params: { id: this.selectedSpace.id },
+            name: "mySpaces",
+            params: { id: UserSessionManager.getSessionItem("id") },
           });
         })
         .catch((error) => {
@@ -235,60 +267,72 @@ export default {
         });
     },
     submitEntity() {
-      fetch(
-        `http://localhost:8080/obligatory-spaces/cuit/${this.newEntity.cuit}`
-      )
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else if (response.status === 404) {
-            return null;
-          } else {
-            throw new Error("Network response was not ok");
-          }
-        })
-        .then((data) => {
-          console.log(UserSessionManager.getSessionItem("id"));
-          if (data) {
-            alert("Ya existe un espacio obligado con ese CUIT.");
-          } else {
-            const dataToSend = {
-              name: this.newEntity.name,
-              province: this.newEntity.province,
-              representativeId: UserSessionManager.getSessionItem("id"),
-              cuit: this.newEntity.cuit,
-            };
+  fetch(`http://localhost:8080/obligatory-spaces/cuit/${this.newEntity.cuit}`)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else if (response.status === 404) {
+        return null;
+      } else {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .then((data) => {
+      if (data) {
+        alert("Ya existe un espacio obligado con ese CUIT.");
+      } else {
+        const dataToSend = {
+          name: this.newEntity.name,
+          province: this.newEntity.province,
+          representativeId: UserSessionManager.getSessionItem("id"),
+          cuit: this.newEntity.cuit,
+        };
 
-            fetch("http://localhost:8080/obligatory-spaces/create", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(dataToSend),
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json();
-              })
-              .then((data) => {
-                this.spaces.push(data);
-                this.showEntityForm = false;
-                this.$router.push({ name: "campus", params: { id: data.id } });
-              })
-              .catch((error) => {
-                console.log(
-                  "There was a problem submitting the new entity:",
-                  error.message
-                );
-              });
-          }
+        fetch("http://localhost:8080/obligatory-spaces/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
         })
-        .catch((error) => {
-          console.log("Error:", error.message);
-        });
-    },
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            this.spaces.push(data);
+            this.showEntityForm = false;
+            this.$router.push({ name: "campus", params: { id: data.id } });
+
+            // Si isUniqueEntity es true, crear una sede con la misma información
+            if (this.isUniqueEntity) {
+              const sedeDataToSend = {
+                name: this.newEntity.name,
+                cuit: this.newEntity.cuit,
+                estado: false,
+                obligatorySpaceId: data.id,
+                representativeId: UserSessionManager.getSessionItem("id"),
+              };
+              
+              this.createSede(sedeDataToSend);
+              this.$router.push({ name: 'mySpaces' });
+            }
+            
+          })
+          .catch((error) => {
+            console.log(
+              "There was a problem submitting the new entity:",
+              error.message
+            );
+          });
+      }
+    })
+    .catch((error) => {
+      console.log("Error:", error.message);
+    });
+},
     representSede(sede) {
   const representativeId = UserSessionManager.getSessionItem("id");
 
