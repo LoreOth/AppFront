@@ -13,6 +13,11 @@ const router = createRouter({
 			component: () => import('../views/About.vue')
 		},
 		{
+			path: '/campusData',
+			name: 'campusData',
+			component: () => import('../views/CampusData.vue')
+		},
+		{
 			path: '/login',
 			component: () => import('../views/Login.vue')
 		  },
@@ -26,6 +31,7 @@ const router = createRouter({
 		  },
 		  {
 			path: '/mySpaces',
+			name: 'mySpaces',
 			component: () => import('../views/MySpaces.vue')
 		  },
 		  {

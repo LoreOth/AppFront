@@ -1,20 +1,24 @@
 <template>
-    <div id="spaces">
-        <h1>Mis sedes</h1>
-        <div class="row header-row">
-            <div class="column">Nombre</div>
-            <div class="column">Provincia</div>
-        </div>
-        <div v-for="campus in campuses" :key="campus.id" class="row" @click="selectCampus(campus)">
-            <div class="column">{{ campus.name }}</div>
-            <div class="column">{{ campus.province }}</div>
-        </div>
-        <div v-if="selectedCampus" class="button-group">
-            <button @click="redirectToDEA">Gestión de DEAs</button>
-            <button>Otro botón</button>
-            <button>Otro botón</button>
-        </div>
-    </div>
+  <div id="spaces">
+      <h1>Mis sedes</h1>
+      <div class="row header-row">
+          <div class="column">Nombre</div>
+          <div class="column">Provincia</div>
+          <div class="column">Acciones</div>
+      </div>
+      <div v-for="campus in campuses" :key="campus.id" class="row" @click="selectCampus(campus)">
+          <div class="column">{{ campus.name }}</div>
+          <div class="column">{{ campus.province }}</div>
+          <div class="column">
+              <button @click.stop="redirectToCampusData(campus.id)">Ver</button>
+          </div>
+      </div>
+      <div v-if="selectedCampus" class="button-group">
+          <button @click="redirectToDEA">Gestión de DEAs</button>
+          <button>Otro botón</button>
+          <button>Otro botón</button>
+      </div>
+  </div>
 </template>
 
 
@@ -59,6 +63,9 @@
     selectCampus(campus) {
       this.selectedCampus = campus;
     },
+    redirectToCampusData(campusId) {
+  this.$router.push({ name: 'campusData', params: { id: campusId } });
+},
 	redirectToDEA() {
 		console.log("this.selectedCampus.id" +this.selectedCampus.id)
       if (this.selectedCampus && this.selectedCampus.id) {

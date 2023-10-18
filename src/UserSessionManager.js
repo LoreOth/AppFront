@@ -2,7 +2,9 @@ class UserSessionManager {
     constructor() {
         this.SESSION_KEY = 'user_session_data';
     }
-
+    isAuthenticated() {
+        return !!this.getSessionData(); 
+      }
     // Guardar datos de sesióna
     setSessionData(data) {
         localStorage.setItem(this.SESSION_KEY, JSON.stringify(data));
