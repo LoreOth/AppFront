@@ -59,7 +59,11 @@
           <div class="column estado-column">
             {{ sede.estado ? "Aprobado" : "Pendiente" }}
           </div>
-          <button class="sede-button" @click="representSede(sede)">
+          <button
+            class="sede-button"
+            @click="representSede(sede)"
+            v-if="!sede.isRepresented"
+          >
             Representar
           </button>
         </div>
@@ -94,7 +98,7 @@ export default {
       },
       newSede: {
         name: "",
-        cuit: "", 
+        cuit: "",
       },
       provinces: [
         "Buenos Aires",
@@ -159,28 +163,30 @@ export default {
         });
     },
     fetchSedes(space) {
-      console.log(space);
-      this.selectedSpace = space;
-      fetch(`http://localhost:8080/campus/${space.id}/sedes`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          this.selectedSpace.sedes = data;
-          this.selectedSpace.sedes = data.map((sede) => ({
-            ...sede,
-            estado: sede.approved ? true : false,
-          }));
+  this.selectedSpace = space;
+  const userId = UserSessionManager.getSessionItem("id");
 
-          console.log("this.selectedSpace.sedes" + this.selectedSpace.sedes);
-        })
-        .catch((error) => {
-          console.log("There was a problem fetching sedes:", error.message);
-        });
-    },
+  fetch(`http://localhost:8080/campus/${space.id}/sedes?userId=${userId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Mapeo de datos para establecer el estado y la representación de cada sede.
+      this.selectedSpace.sedes = data.map(sede => ({
+        ...sede,
+        estado: sede.approved ? "Aprobado" : "Pendiente",
+        isRepresented: localStorage.getItem(`sede-${sede.id}`) === "true" ? true : false
+      }));
+    })
+    .catch(error => {
+      console.log("There was a problem fetching sedes:", error.message);
+    });
+},
+
+
     openEntityForm() {
       this.showEntityForm = true;
       this.showSedeForm = false;
@@ -196,7 +202,7 @@ export default {
         cuit: this.newSede.cuit,
         estado: this.newSede.estado,
         obligatorySpaceId: this.selectedSpace.id,
-        representativeId : UserSessionManager.getSessionItem("id"),
+        representativeId: UserSessionManager.getSessionItem("id"),
       };
 
       fetch("http://localhost:8080/campus/create", {
@@ -283,8 +289,33 @@ export default {
         });
     },
     representSede(sede) {
-      representativeId = UserSessionManager.getSessionItem("id");
+  const representativeId = UserSessionManager.getSessionItem("id");
+
+  const dataToSend = {
+    campus_id: sede.id,
+    user_id: representativeId,
+  };
+
+  fetch("http://localhost:8080/campus/representatives/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify(dataToSend),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      // Establecer la sede como representada en el almacenamiento local.
+      localStorage.setItem(`sede-${sede.id}`, true);
+      sede.isRepresented = true;
+    })
+    .catch(error => {
+      console.log("Error while representing sede:", error.message);
+    });
+}
+
   },
   mounted() {
     this.fetchSpaces();
