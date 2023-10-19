@@ -9,14 +9,11 @@
       <div v-for="campus in campuses" :key="campus.id" class="row" @click="selectCampus(campus)">
           <div class="column">{{ campus.name }}</div>
           <div class="column">{{ campus.province }}</div>
-          <div class="column">
+          <div class="column action-buttons">
               <button @click.stop="redirectToCampusData(campus.id)">Ver</button>
+              <button @click.stop="redirectToDEA(campus.id)">DEAs</button>
+              <button title="Declaración Jurada" @click.stop="redirectToSwornDeclaration(campus.id)">D.J</button>
           </div>
-      </div>
-      <div v-if="selectedCampus" class="button-group">
-          <button @click="redirectToDEA">Gestión de DEAs</button>
-          <button>Otro botón</button>
-          <button>Otro botón</button>
       </div>
   </div>
 </template>
@@ -24,14 +21,14 @@
 
 
   <script>
-  import UserSessionManager from "../UserSessionManager";
+ import UserSessionManager from "../UserSessionManager";
   export default {
-	data() {
-	  return {
-		campuses: [],
-		selectedCampus: null
-	  }
-	},
+    data() {
+      return {
+        campuses: [],
+        selectedCampus: null
+      }
+    },
 	async mounted() {
 	  const userId = UserSessionManager.getSessionItem("id");
 	  const baseURL = "http://localhost:8080/campus/";
@@ -60,20 +57,28 @@
         console.error("Error fetching campuses", error);
       }
     },
+    redirectToSwornDeclaration(campusId) {
+  console.log("Selected Campus ID for Sworn Declaration:" + campusId);
+  if (campusId) {
+    this.$router.push({ name: 'swornDeclaration', params: { id: campusId } });
+  } else {
+    console.error('Error navigating to Sworn Declaration. Campus ID not found.');
+  }
+},
     selectCampus(campus) {
       this.selectedCampus = campus;
     },
     redirectToCampusData(campusId) {
   this.$router.push({ name: 'campusData', params: { id: campusId } });
 },
-	redirectToDEA() {
-		console.log("this.selectedCampus.id" +this.selectedCampus.id)
-      if (this.selectedCampus && this.selectedCampus.id) {
-        this.$router.push({ name: 'Dea', params: { id: this.selectedCampus.id } });
-      } else {
-        console.error('No se ha seleccionado una sede o la sede seleccionada no tiene ID.');
+redirectToDEA(campusId) {
+        console.log("Selected Campus ID:" + campusId);
+        if (campusId) {
+          this.$router.push({ name: 'Dea', params: { id: campusId } });
+        } else {
+          console.error('Error navigating to DEA. Campus ID not found.');
+        }
       }
-    }
   }
 }
   </script>
@@ -146,7 +151,10 @@ button:hover {
   margin-left: auto;
   margin-right: auto;
 }
-
+.action-buttons {
+      display: flex;
+      gap: 5px;
+  }
 .column {
   flex: 1;
   padding: 0 1rem;
