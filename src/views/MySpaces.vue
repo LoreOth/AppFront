@@ -1,54 +1,84 @@
 <template>
   <div id="spaces">
-      <h1>Mis sedes</h1>
-      <div class="row header-row">
-          <div class="column">Nombre</div>
-          <div class="column">Provincia</div>
-          <div class="column">Acciones</div>
+    <h1>Mis sedes</h1>
+    <div class="row header-row">
+      <div class="column">Nombre</div>
+      <div class="column">Provincia</div>
+      <div class="column">Acciones</div>
+    </div>
+    <div
+      v-for="campus in campuses"
+      :key="campus.id"
+      class="row"
+      @click="selectCampus(campus)"
+    >
+      <div class="column">{{ campus.name }}</div>
+      <div class="column">{{ campus.province }}</div>
+      <div class="column action-buttons">
+        <div class="column action-buttons">
+          <button
+            v-if="campus.status"
+            @click.stop="redirectToCampusData(campus.id)"
+          >
+            Ver
+          </button>
+          <button
+            v-if="campus.status"
+            @click.stop="redirectToDEA(campus.id)"
+          >
+            DEAs
+          </button>
+          <button
+            v-if="campus.status"
+            title="Declaración Jurada"
+            @click.stop="redirectToSwornDeclaration(campus.id)"
+          >
+            D.J
+          </button>
+        </div>
       </div>
-      <div v-for="campus in campuses" :key="campus.id" class="row" @click="selectCampus(campus)">
-          <div class="column">{{ campus.name }}</div>
-          <div class="column">{{ campus.province }}</div>
-          <div class="column action-buttons">
-              <button @click.stop="redirectToCampusData(campus.id)">Ver</button>
-              <button @click.stop="redirectToDEA(campus.id)">DEAs</button>
-              <button title="Declaración Jurada" @click.stop="redirectToSwornDeclaration(campus.id)">D.J</button>
-          </div>
-      </div>
+    </div>
   </div>
 </template>
 
 
 
   <script>
- import UserSessionManager from "../UserSessionManager";
-  export default {
-    data() {
-      return {
-        campuses: [],
-        selectedCampus: null
+import UserSessionManager from "../UserSessionManager";
+export default {
+  data() {
+    return {
+      campuses: [],
+      selectedCampus: null,
+    };
+  },
+  async mounted() {
+    const userId = UserSessionManager.getSessionItem("id");
+    const baseURL = "http://localhost:8080/campus/";
+
+    try {
+      const response = await fetch(
+        `${baseURL}representatives/${userId}/campuses`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    },
-	async mounted() {
-	  const userId = UserSessionManager.getSessionItem("id");
-	  const baseURL = "http://localhost:8080/campus/";
-  
-	  try {
-		const response = await fetch(`${baseURL}representatives/${userId}/campuses`);
-		if (!response.ok) {
-		  throw new Error(`HTTP error! Status: ${response.status}`);
-		}
-		this.campuses = await response.json();
-	  } catch (error) {
-		console.error("Error fetching campuses", error);
-	  }
-	},
-	methods: {
+      this.campuses = await response.json();
+      this.campuses.forEach(campus => {
+  console.log("campus.status " +campus.status);
+});
+    } catch (error) {
+      console.error("Error fetching campuses", error);
+    }
+  },
+  methods: {
     async fetchCampuses() {
       const userId = UserSessionManager.getSessionItem("id");
       const baseURL = "http://localhost:8080/campus/";
       try {
-        const response = await fetch(`${baseURL}representatives/${userId}/campuses`);
+        const response = await fetch(
+          `${baseURL}representatives/${userId}/campuses`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -58,30 +88,35 @@
       }
     },
     redirectToSwornDeclaration(campusId) {
-  console.log("Selected Campus ID for Sworn Declaration:" + campusId);
-  if (campusId) {
-    this.$router.push({ name: 'swornDeclaration', params: { id: campusId } });
-  } else {
-    console.error('Error navigating to Sworn Declaration. Campus ID not found.');
-  }
-},
+      console.log("Selected Campus ID for Sworn Declaration:" + campusId);
+      if (campusId) {
+        this.$router.push({
+          name: "swornDeclaration",
+          params: { id: campusId },
+        });
+      } else {
+        console.error(
+          "Error navigating to Sworn Declaration. Campus ID not found."
+        );
+      }
+    },
     selectCampus(campus) {
       this.selectedCampus = campus;
     },
     redirectToCampusData(campusId) {
-  this.$router.push({ name: 'campusData', params: { id: campusId } });
-},
-redirectToDEA(campusId) {
-        console.log("Selected Campus ID:" + campusId);
-        if (campusId) {
-          this.$router.push({ name: 'Dea', params: { id: campusId } });
-        } else {
-          console.error('Error navigating to DEA. Campus ID not found.');
-        }
+      this.$router.push({ name: "campusData", params: { id: campusId } });
+    },
+    redirectToDEA(campusId) {
+      console.log("Selected Campus ID:" + campusId);
+      if (campusId) {
+        this.$router.push({ name: "Dea", params: { id: campusId } });
+      } else {
+        console.error("Error navigating to DEA. Campus ID not found.");
       }
-  }
-}
-  </script>
+    },
+  },
+};
+</script>
 <style>
 #spaces {
   display: flex;
@@ -152,9 +187,9 @@ button:hover {
   margin-right: auto;
 }
 .action-buttons {
-      display: flex;
-      gap: 5px;
-  }
+  display: flex;
+  gap: 5px;
+}
 .column {
   flex: 1;
   padding: 0 1rem;
