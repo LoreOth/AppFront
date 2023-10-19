@@ -61,7 +61,7 @@
         <div class="column province">{{ sede.province }}</div>
         <div class="status-button-wrapper">
           <div class="column estado-column">
-            {{ sede.estado ? "Aprobado" : "Pendiente" }}
+            {{ sede.estado  === '1' ? "Aprobado" : "Pendiente" }}
           </div>
           <button
             class="sede-button"
@@ -183,7 +183,7 @@ export default {
         .then((data) => {
           this.spaces = data.map((space) => ({
             ...space,
-            estado: space.status ? "Aprobado" : "Pendiente",
+            estado: space.status === '1' ? "Aprobado" : "Pendiente",
             cuit: space.cuit,
           }));
         })
@@ -209,7 +209,7 @@ export default {
       // Mapeo de datos para establecer el estado y la representación de cada sede.
       this.selectedSpace.sedes = data.map(sede => ({
         ...sede,
-        estado: sede.approved === 1 ? "Aprobado" : "Pendiente",
+        estado: sede.status === '1' ? "Aprobado" : "Pendiente",
         isRepresented: localStorage.getItem(`sede-${sede.id}`) === "true" ? true : false
       }));
     })
