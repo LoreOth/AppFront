@@ -30,6 +30,11 @@ const router = createRouter({
 			component: () => import('../views/MyHome.vue')
 		  },
 		  {
+			path: '/swornDeclaration/:id',
+			name: 'swornDeclaration',
+			component: () => import('../views/SwornDeclaration.vue')
+		  },
+		  {
 			path: '/mySpaces',
 			name: 'mySpaces',
 			component: () => import('../views/MySpaces.vue')
