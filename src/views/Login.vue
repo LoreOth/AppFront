@@ -67,14 +67,14 @@ export default {
             if (data.error) {
               console.log("Inicio de sesión fallido:", data.error);
             } else if (data.data && data.data.email) {
-              // Nota el cambio aquí
+
               console.log("Inicio de sesión exitoso");
               this.$emit("authenticated", true);
               this.$store.dispatch('authenticate', true);
               UserSessionManager.setSessionData({
-                email: data.data.email, // Nota el cambio aquí
-                roles: data.data.roles, // Nota el cambio aquí
-                id: data.data.id, // Nota el cambio aquí
+                email: data.data.email, 
+                roles: data.data.roles, 
+                id: data.data.id, 
               });
               this.$router.push("/myhome");
               console.log(UserSessionManager.getSessionData());

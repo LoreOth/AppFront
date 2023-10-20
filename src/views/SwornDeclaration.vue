@@ -4,36 +4,59 @@
 
     <form @submit.prevent="submitForm">
       <div class="form-group">
-        <label>¿Cumple con todas las regulaciones vigentes?</label>
+        <label>¿Cuenta con personal capacitado?</label>
         <input
           type="checkbox"
-          v-model="form.authorizedByHealthMinistry"
+          v-model="form.hasTrainedStaff"
           class="checkbox-input"
         />
       </div>
 
       <div class="form-group">
-        <label> ¿Está libre de deudas tributarias? </label>
-        <input type="checkbox" v-model="form.noDebts" class="checkbox-input" />
-      </div>
-
-      <div class="form-group">
-        <label>¿Tiene licencias al día?</label>
+        <label>¿Tiene señalitica adecuada?</label>
         <input
           type="checkbox"
-          v-model="form.licensesUpToDate"
+          v-model="form.hasAppropriateSignage"
           class="checkbox-input"
         />
       </div>
 
       <div class="form-group">
-        <label>¿Aplica políticas de igualdad y no discriminación?</label>
+        <label>¿Tiene protocolo de acción en caso de muerte súbita?</label>
         <input
           type="checkbox"
-          v-model="form.equalityPolicies"
+          v-model="form.hasSuddenDeathProtocol"
           class="checkbox-input"
         />
       </div>
+
+      <div class="form-group">
+        <label>¿Tiene sistema de emergencia médica?</label>
+        <input
+          type="checkbox"
+          v-model="form.hasMedicalEmergencySystem"
+          class="checkbox-input"
+        />
+      </div>
+
+      <div
+        class="form-group"
+        v-for="(maintenance, index) in form.maintenanceStaff"
+        :key="index"
+      >
+        <label>Responsable de mantenimiento:</label>
+        <input type="text" v-model="maintenance.name" placeholder="Nombre" />
+        <input type="email" v-model="maintenance.email" placeholder="Email" />
+        <input type="tel" v-model="maintenance.phone" placeholder="Teléfono" />
+        <button
+          @click.prevent="removeMaintenance(index)"
+          v-if="form.maintenanceStaff.length > 1"
+        >
+          Eliminar
+        </button>
+      </div>
+      <button @click.prevent="addMaintenance">Ingresar otro responsable</button>
+
       <div class="form-group">
         <label>Cantidad de DEAs:</label>
         <input type="number" v-model.number="form.deaCount" min="0" />
@@ -44,9 +67,14 @@
       </div>
 
       <button type="submit" class="validate-button">Validar</button>
-      <button @click="sendFormData" :disabled="!isFormValid" class="validate-button">Aceptar</button>
+      <button
+        @click="sendFormData"
+        :disabled="!isFormValid"
+        class="validate-button"
+      >
+        Aceptar
+      </button>
       <button @click="cancel">Cancelar</button>
-
     </form>
   </div>
 </template>
@@ -55,10 +83,11 @@ export default {
   data() {
     return {
       form: {
-        authorizedByHealthMinistry: false,
-        noDebts: false,
-        licensesUpToDate: false,
-        equalityPolicies: false,
+        hasTrainedStaff: false,
+        hasAppropriateSignage: false,
+        hasSuddenDeathProtocol: false,
+        hasMedicalEmergencySystem: false,
+        maintenanceStaff: [{ name: "", email: "", phone: "" }],
         deaCount: 0,
       },
       error: null,
@@ -69,61 +98,77 @@ export default {
   },
   computed: {
     isDeaCountValid() {
-        return this.form.deaCount === this.actualDeaCount;
+      return this.form.deaCount === this.actualDeaCount;
     },
   },
   methods: {
+    addMaintenance() {
+      this.form.maintenanceStaff.push({ name: "", email: "", phone: "" });
+    },
+    removeMaintenance(index) {
+      this.form.maintenanceStaff.splice(index, 1);
+    },
     cancel() {
-        this.$router.go(-1); 
+      this.$router.go(-1);
     },
     async sendFormData() {
-        console.log("campusId "+ this.$route.params.id)
-        console.log("this.form "+this.form)
-    if (this.isFormValid) {
-      const response = await fetch(
-        "http://localhost:8080/documentation/SwornDeclarationSave",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ ...this.form, campusId: this.$route.params.id }),
+      console.log("campusId " + this.$route.params.id);
+      console.log("this.form " + this.form);
 
+      const payload = {
+        hasTrainedStaff: this.form.hasTrainedStaff,
+        hasAppropriateSignage: this.form.hasAppropriateSignage,
+        hasSuddenDeathProtocol: this.form.hasSuddenDeathProtocol,
+        hasMedicalEmergencySystem: this.form.hasMedicalEmergencySystem,
+        deaCount: this.form.deaCount,
+        campusId: this.$route.params.id,
+        maintenanceStaff: this.form.maintenanceStaff,
+      };
+
+      if (this.isFormValid) {
+        const response = await fetch(
+          "http://localhost:8080/documentation/SwornDeclarationSave",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ...payload,
+              campusId: this.$route.params.id,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          this.error = "Error al enviar los datos.";
+        } else {
         }
-      );
-
-      if (!response.ok) {
-        this.error = "Error al enviar los datos.";
-      } else {
-        
       }
-    }
-  },
+    },
     async fetchCampusDeas(campusId) {
       const response = await fetch(
         `http://localhost:8080/campus/${campusId}/deaCount`
       );
       if (response.ok) {
         this.actualDeaCount = parseInt(await response.json());
-
       } else {
         console.error("Failed to fetch campus DEA count");
       }
     },
     submitForm() {
-  if (!this.isDeaCountValid) {
-    this.error = "La cantidad de DEAs ingresada no coincide con la base de datos.";
-    this.isFormValid = false; 
-  } else {
-    this.isFormValid = true; 
-    alert('Validación exitosa, puede aceptar.'); 
-  }
-},
-
+      if (!this.isDeaCountValid) {
+        this.error =
+          "La cantidad de DEAs ingresada no coincide con la base de datos.";
+        this.isFormValid = false;
+      } else {
+        this.isFormValid = true;
+        alert("Validación exitosa, puede aceptar.");
+      }
+    },
   },
 
   mounted() {
-   
     this.fetchCampusDeas(this.$route.params.id);
   },
 };

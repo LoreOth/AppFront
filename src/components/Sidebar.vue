@@ -24,14 +24,6 @@
         <span class="material-icons">description</span>
         <span class="text">Perfil</span>
       </router-link>
-      <router-link
-        v-if="userRoles.includes('ROLE_ADMIN')"
-        to="/team"
-        class="button"
-      >
-        <span class="material-icons">group</span>
-        <span class="text">Solicitudes</span>
-      </router-link>
       <router-link v-if="!isLoggedIn" to="/register" class="button">
         <span class="material-icons">login</span>
         <span class="text">Registrarse</span>
@@ -40,25 +32,25 @@
         <span class="material-icons">login</span>
         <span class="text">Iniciar Sesión</span>
       </router-link>
-      <router-link  v-if="!userRoles.includes('ADMIN')" to="/spaces" class="button">
+      <router-link  v-if="userRoles.includes('USER')" to="/spaces" class="button">
         <span class="material-icons">group</span>
         <span class="text">Espacios</span>
       </router-link>
-      <router-link  v-if="userRoles.includes('ADMIN')" to="/requests" class="button">
+      <router-link v-if="!isLoggedIn" to="/managmentLogin" class="button">
+        <span class="material-icons">group</span>
+        <span class="text">Administración</span>
+      </router-link>
+      <router-link v-if="userRoles.includes('ADMIN')" to="/registerStaff" class="button">
+        <span class="material-icons">login</span>
+        <span class="text">Registrar Usuarios</span>
+      </router-link>
+      <router-link  v-if="userRoles.includes('ADMIN_PROV')" to="/requests" class="button">
         <span class="material-icons">description</span>
         <span class="text">Solicitudes</span>
       </router-link>
-      <router-link  v-if="!userRoles.includes('ADMIN')" to="/mySpaces" class="button">
+      <router-link  v-if="userRoles.includes('USER')" to="/mySpaces" class="button">
         <span class="material-icons">group</span>
         <span class="text">Mis espacios</span>
-      </router-link>
-      <router-link
-        v-if="userRoles.includes('REPRE_EO')"
-        to="/requestAdministration"
-        class="button"
-      >
-        <span class="material-icons">description</span>
-        <span class="text">Solicitar administración</span>
       </router-link>
       <router-link
         v-if="isLoggedIn"

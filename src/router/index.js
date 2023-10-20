@@ -53,6 +53,22 @@ const router = createRouter({
 			component: () => import('../views/Spaces.vue')
 		  },
 		  {
+			path: '/adminManagment',
+			component: () => import('../views/AdminManagment.vue')
+		  },
+		  {
+			path: '/certManagment',
+			component: () => import('../views/CertManagment.vue')
+		  },
+		  {
+			path: '/managmentLogin',
+			component: () => import('../views/ManagmentLogin.vue')
+		  },
+		  {
+			path: '/registerStaff',
+			component: () => import('../views/RegisterStaff.vue')
+		  },
+		  {
 			path: '/requestAdministration',
 			component: () => import('../views/RequestAdministration.vue')
 		  },
