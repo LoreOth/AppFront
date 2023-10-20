@@ -18,10 +18,10 @@
       <div class="column">{{ space.name }}</div>
       <div class="column province">{{ space.province }}</div>
       <div class="column">{{ space.cuit }}</div>
-      <div class="column">{{ space.estado }}</div>
+      <div class="column">{{ space.status ? "Aprobado" : "Pendiente" }}</div>
     </div>
 
-    <button @click="openEntityForm">Solicitar Entidad</button>
+    <button @click="openEntityForm">Crear Entidad</button>
 
     <!-- Formulario para la entidad, inicialmente oculto -->
     <div v-if="showEntityForm">
@@ -61,18 +61,18 @@
         <div class="column province">{{ sede.province }}</div>
         <div class="status-button-wrapper">
           <div class="column estado-column">
-            {{ sede.estado  === '1' ? "Aprobado" : "Pendiente" }}
+            {{ sede.status  ? "Aprobado" : "Pendiente" }}
           </div>
-          <button
+          <button title="Solicitar administración de sede"
             class="sede-button"
             @click="representSede(sede)"
-            v-if="!sede.isRepresented"
+            v-if="sede.status"
           >
             Representar
           </button>
         </div>
       </div>
-      <button @click="openSedeForm" v-if="selectedSpace">
+      <button @click="openSedeForm" v-if="selectedSpace && selectedSpace.status" >
         Crear Nueva Sede
       </button>
       <div class="form-inputs" v-if="showSedeForm">
@@ -209,7 +209,7 @@ export default {
       // Mapeo de datos para establecer el estado y la representación de cada sede.
       this.selectedSpace.sedes = data.map(sede => ({
         ...sede,
-        estado: sede.status === '1' ? "Aprobado" : "Pendiente",
+        estado: sede.status === 1 ? "Aprobado" : "Pendiente",
         isRepresented: localStorage.getItem(`sede-${sede.id}`) === "true" ? true : false
       }));
     })
@@ -337,8 +337,8 @@ export default {
   const representativeId = UserSessionManager.getSessionItem("id");
 
   const dataToSend = {
-    campus_id: sede.id,
-    user_id: representativeId,
+    campusId: sede.id,
+    userId: representativeId,
   };
 
   fetch("http://localhost:8080/campus/representatives/add", {
