@@ -61,12 +61,12 @@
         <div class="column province">{{ sede.province }}</div>
         <div class="status-button-wrapper">
           <div class="column estado-column">
-            {{ sede.status  ? "Aprobado" : "Pendiente" }}
+            {{ sede.status ===0 ? "Aprobado" : "Pendiente" }}
           </div>
           <button title="Solicitar administración de sede"
             class="sede-button"
             @click="representSede(sede)"
-            v-if="sede.status"
+            v-if="sede.status !=1"
           >
             Representar
           </button>
