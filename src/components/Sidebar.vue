@@ -42,7 +42,7 @@
       </router-link>
       <router-link v-if="userRoles.includes('ADMIN')" to="/registerStaff" class="button">
         <span class="material-icons">login</span>
-        <span class="text">Registrar Usuarios</span>
+        <span class="text">Registrar Administrador Provincial / Certificante</span>
       </router-link>
       <router-link  v-if="userRoles.includes('ADMIN_PROV')" to="/requests" class="button">
         <span class="material-icons">description</span>

@@ -113,7 +113,8 @@ export default {
     },
     async sendFormData() {
       console.log("campusId " + this.$route.params.id);
-      console.log("this.form " + this.form);
+      console.log("this.form", JSON.stringify(this.form, null, 2));
+
 
       const payload = {
         hasTrainedStaff: this.form.hasTrainedStaff,

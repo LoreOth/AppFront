@@ -5,6 +5,7 @@
       <div class="column">Nombre</div>
       <div class="column">Provincia</div>
       <div class="column">Acciones</div>
+      <div class="column">Estado</div>
     </div>
     <div
       v-for="campus in campuses"
@@ -17,19 +18,19 @@
       <div class="column action-buttons">
         <div class="column action-buttons">
           <button
-            v-if="campus.status"
+            v-if="campus.status != 1"
             @click.stop="redirectToCampusData(campus.id)"
           >
             Ver
           </button>
           <button
-            v-if="campus.status"
+            v-if="campus.status != 1"
             @click.stop="redirectToDEA(campus.id)"
           >
             DEAs
           </button>
           <button
-            v-if="campus.status"
+            v-if="campus.status != 1"
             title="Declaración Jurada"
             @click.stop="redirectToSwornDeclaration(campus.id)"
           >
@@ -37,6 +38,7 @@
           </button>
         </div>
       </div>
+      <div class="column">{{ campus.statusName }}</div>
     </div>
   </div>
 </template>
@@ -50,28 +52,46 @@ export default {
     return {
       campuses: [],
       selectedCampus: null,
+      statusNames: {}
     };
   },
   async mounted() {
     const userId = UserSessionManager.getSessionItem("id");
-    const baseURL = "http://localhost:8080/campus/";
+  const baseURL = "http://localhost:8080/campus/";
 
+  try {
+    const response = await fetch(
+      `${baseURL}representatives/${userId}/campuses`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    this.campuses = await response.json();
+
+    // Mover el bucle forEach aquí
+    for (const campus of this.campuses) {
+      await this.loadStatusName(campus);
+    }
+  } catch (error) {
+    console.error("Error fetching campuses", error);
+  }
+},
+  methods: {
+    async loadStatusName(campus) {
     try {
-      const response = await fetch(
-        `${baseURL}representatives/${userId}/campuses`
-      );
+      const response = await fetch(`http://localhost:8080/status/get-name?status=${campus.status}`);
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      this.campuses = await response.json();
-      this.campuses.forEach(campus => {
-  console.log("campus.status " +campus.status);
-});
+      const statusName = await response.text();
+
+      // Asignar el nombre del estado al campus
+      campus.statusName = statusName;
     } catch (error) {
-      console.error("Error fetching campuses", error);
+      console.error("Error fetching status name", error);
     }
   },
-  methods: {
     async fetchCampuses() {
       const userId = UserSessionManager.getSessionItem("id");
       const baseURL = "http://localhost:8080/campus/";

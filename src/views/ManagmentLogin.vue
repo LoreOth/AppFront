@@ -56,7 +56,7 @@
           })
             .then((response) => {
               if (!response.ok) {
-                // Transforma el error en una respuesta JSON para manejarlo en el siguiente 'then'
+
                 return response.json().then((err) => {
                   throw err;
                 });
@@ -70,6 +70,8 @@
         console.log("Inicio de sesión exitoso");
         this.$emit("authenticated", true);
         this.$store.dispatch('authenticate', true);
+        localStorage.setItem("email", JSON.stringify({ email: this.input.email }));
+
         UserSessionManager.setSessionData({
             email: data.data.email, 
             roles: data.data.roles, 

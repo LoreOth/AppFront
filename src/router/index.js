@@ -6,6 +6,7 @@ const router = createRouter({
 	routes: [
 		{
 			path: '/',
+			name:'home',
 			component: Home
 		},
 		{
@@ -52,6 +53,15 @@ const router = createRouter({
 			path: '/spaces',
 			component: () => import('../views/Spaces.vue')
 		  },
+		  {
+			path: '/showSwornDeclaration',
+			name: 'showSwornDeclaration',
+			component: () => import('../views/ShowSwornDeclaration.vue'),
+			props: (route) => ({
+			  declaration: JSON.parse(route.query.declaration),
+			}),
+		  },
+		  
 		  {
 			path: '/adminManagment',
 			component: () => import('../views/AdminManagment.vue')

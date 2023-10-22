@@ -71,6 +71,8 @@ export default {
               console.log("Inicio de sesión exitoso");
               this.$emit("authenticated", true);
               this.$store.dispatch('authenticate', true);
+              localStorage.setItem("email", JSON.stringify({ email: this.input.email }));
+
               UserSessionManager.setSessionData({
                 email: data.data.email, 
                 roles: data.data.roles, 

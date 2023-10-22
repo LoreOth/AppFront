@@ -1,5 +1,8 @@
 <template>
   <div class="admin">
+    <div v-if="notification" class="notification">
+        {{ notification }}
+      </div>
     <h1>Administrador provincial</h1>
     <h2>Aprobar solicitudes</h2>
     <div class="form-group">
@@ -29,9 +32,6 @@
       {{ campus.representativeFirstName }} {{ campus.representativeLastName }}
       <button @click="approveCampus(campus.campusId)">Approve</button>
       <button @click="cancelApproval">Cancelar</button>
-      <div v-if="notification" class="notification">
-        {{ notification }}
-      </div>
     </div>
   </div>
 </template>
@@ -153,19 +153,20 @@ export default {
 }
 
 .admin h1,
-.certificante h2 {
+.admin h2 {
   color: #ecf0f1;
   margin-bottom: 1rem;
+  font-size: 0.9;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .admin h1 {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .admin h2 {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 .admin .form-group {
