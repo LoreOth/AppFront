@@ -1,5 +1,5 @@
 <template>
-  <div id="spaces">
+  <div class="space" id="spaces">
     <h1>Mis sedes</h1>
     <div class="row header-row">
       <div class="column">Nombre</div>
@@ -21,7 +21,7 @@
             v-if="campus.status != 1"
             @click.stop="redirectToCampusData(campus.id)"
           >
-            Ver
+            Info
           </button>
           <button
             v-if="campus.status != 1"
@@ -35,6 +35,13 @@
             @click.stop="redirectToSwornDeclaration(campus.id)"
           >
             D.J
+          </button>
+          <button
+            v-if="campus.status != 1"
+            title="Ingreso muerte súbita"
+            @click.stop="redirectSuddenDeath(campus.id)"
+          >
+           MS
           </button>
         </div>
       </div>
@@ -138,13 +145,18 @@ export default {
 };
 </script>
 <style>
+.space{
+
+  width: 900px;
+
+
+}
 #spaces {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 600px;
   margin: 0 auto;
   background-color: #2c3e50;
   border-radius: 8px;

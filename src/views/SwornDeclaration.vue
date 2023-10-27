@@ -1,5 +1,5 @@
 <template>
-  <div id="sworn-declaration-form">
+  <div class="showDeclaration"  id="sworn-declaration-form">
     <h1>Declaración Jurada</h1>
 
     <form @submit.prevent="submitForm">
@@ -175,13 +175,19 @@ export default {
 };
 </script>
 <style>
+
+.showDeclaration{
+
+width: 900px;
+
+
+}
 #sworn-declaration-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 600px;
   margin: 0 auto;
   background-color: #2c3e50;
   border-radius: 8px;

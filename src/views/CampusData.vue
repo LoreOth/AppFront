@@ -4,13 +4,13 @@
     <div class="scrollable-inputs">
       <div class="form-inputs">
         <label for="name">Nombre</label>
-        <input v-model="campus.name" id="name" type="text" />
+        <input class="inputClass" v-model="campus.name" id="name" type="text" />
 
         <label for="cuit">CUIT</label>
-        <input v-model="campus.cuit" id="cuit" type="text" readonly />
+        <input class="inputClass" v-model="campus.cuit" id="cuit" type="text" readonly />
 
         <label for="latitude">Latitud</label>
-        <input
+        <input class="inputClass"
           v-model="campus.latitude"
           id="latitude"
           type="number"
@@ -18,7 +18,7 @@
         />
 
         <label for="longitude">Longitud</label>
-        <input
+        <input class="inputClass"
           v-model="campus.longitude"
           id="longitude"
           type="number"
@@ -26,25 +26,25 @@
         />
 
         <label for="province">Provincia</label>
-        <input v-model="campus.province" id="province" type="text" />
+        <input class="inputClass" v-model="campus.province" id="province" type="text" />
 
         <label for="city">Ciudad</label>
-        <input v-model="campus.city" id="city" type="text" />
+        <input class="inputClass" v-model="campus.city" id="city" type="text" />
 
         <label for="address">Domicilio</label>
-        <input v-model="campus.address" id="address" type="text" />
+        <input class="inputClass" v-model="campus.address" id="address" type="text" />
 
         <label for="area">Superficie</label>
-        <input v-model="campus.area" id="area" type="text" />
+        <input class="inputClass" v-model="campus.area" id="area" type="text" />
 
         <label for="floors">Pisos</label>
-        <input v-model="campus.floors" id="floors" type="number" />
+        <input class="inputClass" v-model="campus.floors" id="floors" type="number" />
 
         <label for="staff">Cantidad de Personal Estable</label>
-        <input v-model="campus.staff" id="staff" type="number" />
+        <input class="inputClass" v-model="campus.staff" id="staff" type="number" />
 
         <label for="visits">Cantidad Promedio de Visitas</label>
-        <input v-model="campus.visits" id="visits" type="number" />
+        <input class="inputClass" v-model="campus.visits" id="visits" type="number" />
       </div>
     </div>
 
@@ -141,6 +141,10 @@ export default {
   .button {
     display: inline-block;
   }
+.inputClass{
+  height: 30px;
+  width: 100%;
+}
 
 #spaces .form-inputs {
   width: 800%;
@@ -158,6 +162,8 @@ export default {
   max-height: 320px;
   overflow-y: auto;
   padding-right: 1rem;
+  width: 40%;
+
 }
 
 #spaces .form-inputs {

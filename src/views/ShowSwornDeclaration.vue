@@ -1,66 +1,87 @@
 <template>
-    <div class="declaration-details">
-      <h1>Detalles de la Declaración Jurada</h1>
-      <form @submit.prevent="onSubmit">
-        <!-- Mostrar todos los datos de la declaración aquí -->
-        <div class="form-group">
-          <label>¿Cuenta con personal capacitado?:</label>
-          <span v-if="declaration && declaration.hasTrainedStaff" class="answer">
-            {{ declaration.hasTrainedStaff ? "Sí" : "No" }}
-          </span>
-          <span v-else>No disponible</span>
-        </div>
+  <div class="declaration-details">
+    <h1>Detalles de la Declaración Jurada</h1>
+    <form @submit.prevent="onSubmit">
+      <!-- Mostrar todos los datos de la declaración aquí -->
       <div class="form-group">
-        <label>¿Tiene señalitica adecuada?:</label>
-        <span v-if="declaration && declaration.hasAppropriateSignage">{{
-          declaration.hasAppropriateSignage ? "Sí" : "No"
-        }}</span>
-        <span v-else>No disponible</span>
+        <label for="hasTrainedStaff">¿Cuenta con personal capacitado?</label>
+        <input
+          type="checkbox"
+          v-model="declaration.hasTrainedStaff"
+          id="hasTrainedStaff"
+        />
       </div>
       <div class="form-group">
-        <label>¿Tiene protocolo de acción en caso de muerte súbita?:</label>
-        <span v-if="declaration && declaration.hasSuddenDeathProtocol">{{
-          declaration.hasSuddenDeathProtocol ? "Sí" : "No"
-        }}</span>
-        <span v-else>No disponible</span>
+        <label for="hasAppropriateSignage">¿Tiene señalítica adecuada?</label>
+        <input
+          type="checkbox"
+          v-model="declaration.hasAppropriateSignage"
+          id="hasAppropriateSignage"
+        />
       </div>
       <div class="form-group">
-        <label>¿Tiene sistema de emergencia médica?:</label>
-        <span v-if="declaration && declaration.hasMedicalEmergencySystem">{{
-          declaration.hasMedicalEmergencySystem ? "Sí" : "No"
-        }}</span>
-        <span v-else>No disponible</span>
+        <label for="hasSuddenDeathProtocol"
+          >¿Tiene protocolo de acción en caso de muerte súbita?</label
+        >
+        <input
+          type="checkbox"
+          v-model="declaration.hasSuddenDeathProtocol"
+          id="hasSuddenDeathProtocol"
+        />
       </div>
       <div class="form-group">
-        <label>¿Cantidad de DEAs?:</label>
-        <span v-if="declaration">{{ declaration.deaCount }}</span>
-        <span v-else>No disponible</span>
+        <label for="hasMedicalEmergencySystem"
+          >¿Tiene sistema de emergencia médica?</label
+        >
+        <input
+          type="checkbox"
+          v-model="declaration.hasMedicalEmergencySystem"
+          id="hasMedicalEmergencySystem"
+        />
+      </div>
+      <div class="form-group">
+        <label for="deaCount">¿Cantidad de DEAs?</label>
+        <input type="number" v-model="declaration.deaCount" id="deaCount" />
+      </div>
+      <div class="form-group">
+        <label for="observations">Observaciones</label>
+        <textarea
+          v-model="declaration.observations"
+          id="observations"
+        ></textarea>
       </div>
 
       <div class="button-group">
-        <button type="button" @click="showConfirmationDialog = true" class="accept-button">Aceptar</button>
+        <button
+          type="button"
+          @click="showConfirmationDialog = true"
+          class="accept-button"
+        >
+          Aceptar
+        </button>
         <button @click="cancel" class="cancel-button">Cancelar</button>
       </div>
       <div v-if="showConfirmationDialog" class="confirmation-dialog">
         <div class="confirmation-content">
           <p>
-            ¿Está seguro que quiere aceptar la declaración jurada con los siguientes datos?
+            ¿Está seguro que quiere aceptar la declaración jurada con los
+            siguientes datos?
           </p>
           <ul>
-          <li v-if="!declaration.hasTrainedStaff">
-            No cuenta con personal capacitado
-          </li>
-          <li v-if="!declaration.hasAppropriateSignage">
-            No tiene señalítica adecuada
-          </li>
-          <li v-if="!declaration.hasSuddenDeathProtocol">
-            No tiene protocolo de acción en caso de muerte súbita
-          </li>
-          <li v-if="!declaration.hasMedicalEmergencySystem">
-            No tiene sistema de emergencia médica
-          </li>
-          <li v-if="declaration.deaCount === 0">Cantidad de DEAs es 0</li>
-        </ul>
+            <li v-if="!declaration.hasTrainedStaff">
+              No cuenta con personal capacitado
+            </li>
+            <li v-if="!declaration.hasAppropriateSignage">
+              No tiene señalítica adecuada
+            </li>
+            <li v-if="!declaration.hasSuddenDeathProtocol">
+              No tiene protocolo de acción en caso de muerte súbita
+            </li>
+            <li v-if="!declaration.hasMedicalEmergencySystem">
+              No tiene sistema de emergencia médica
+            </li>
+            <li v-if="declaration.deaCount === 0">Cantidad de DEAs es 0</li>
+          </ul>
           <div class="button-group">
             <button @click="sendRequest" class="accept-button">Aceptar</button>
             <button @click="cancel" class="cancel-button">Cancelar</button>
@@ -114,51 +135,51 @@ export default {
     },
 
     async sendRequest() {
-  const declarationId = this.declaration.id;
-  const campusId = this.declaration.campusId; // Supongo que tienes el ID del campus en la declaración
+      const declarationId = this.declaration.id;
+      const campusId = this.declaration.campusId;
+      const updatedDeclaration = {
+        ...this.declaration,
+      };
+      try {
+        const declarationResponse = await fetch(
+          "http://localhost:8080/documentation/updateDeclarationStatus",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedDeclaration),
+          }
+        );
 
-  try {
-    // Primero, actualiza el estado de la declaración jurada
-    const declarationResponse = await fetch(
-      "http://localhost:8080/documentation/updateDeclarationStatus",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `declarationId=${declarationId}`,
+        if (!declarationResponse.ok) {
+          throw new Error(`HTTP error! Status: ${declarationResponse.status}`);
+        }
+
+        const campusResponse = await fetch(
+          "http://localhost:8080/campus/updateCampusStatus",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `campusId=${campusId}&status=2`,
+          }
+        );
+
+        if (!campusResponse.ok) {
+          throw new Error(`HTTP error! Status: ${campusResponse.status}`);
+        }
+
+        this.showSuccessNotification = true;
+
+        setTimeout(() => {
+          this.$router.go(-1);
+        }, 2000);
+      } catch (error) {
+        console.error("Error updating declaration and campus status:", error);
       }
-    );
-
-    if (!declarationResponse.ok) {
-      throw new Error(`HTTP error! Status: ${declarationResponse.status}`);
-    }
-
-
-    const campusResponse = await fetch(
-      "http://localhost:8080/campus/updateCampusStatus",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `campusId=${campusId}&status=2`, 
-      }
-    );
-
-    if (!campusResponse.ok) {
-      throw new Error(`HTTP error! Status: ${campusResponse.status}`);
-    }
-
-    this.showSuccessNotification = true;
-
-    setTimeout(() => {
-      this.$router.go(-1);
-    }, 2000);
-  } catch (error) {
-    console.error("Error updating declaration and campus status:", error);
-  }
-},
+    },
 
     cancel() {
       this.$router.go(-1);
