@@ -1,5 +1,5 @@
 <template>
-  <div id="spaces">
+  <div class="space" id="spaces">
     <h1>Espacios Obligados</h1>
 
     <div class="header-row">
@@ -37,16 +37,24 @@
         <label>CUIT:</label>
         <input type="text" v-model="newEntity.cuit" />
         <div class="checkbox-wrapper">
-        <input type="checkbox" v-model="isUniqueEntity" id="uniqueEntityCheckbox"/>
-        <label for="uniqueEntityCheckbox" title="Seleccionar si es única entidad">Seleccionar si es única entidad</label>
-    </div>
+          <input
+            type="checkbox"
+            v-model="isUniqueEntity"
+            id="uniqueEntityCheckbox"
+          />
+          <label
+            for="uniqueEntityCheckbox"
+            title="Seleccionar si es única entidad"
+            >Seleccionar si es única entidad</label
+          >
+        </div>
         <button @click="cancelEntityForm">Cancelar</button>
         <button @click="submitEntity">Enviar</button>
       </div>
     </div>
 
     <!-- Listado de sedes para un espacio obligado seleccionado -->
-    <div v-if="selectedSpace">
+    <div class="CampusClass" v-if="selectedSpace">
       <h2>Sedes : {{ selectedSpace.name }}</h2>
 
       <!-- Encabezado de las sedes -->
@@ -61,18 +69,23 @@
         <div class="column province">{{ sede.province }}</div>
         <div class="status-button-wrapper">
           <div class="column estado-column">
-            {{ sede.status ===0 ? "Aprobado" : "Pendiente" }}
+            {{ sede.status !== 1 ? "Aprobado" : "Pendiente" }}
           </div>
-          <button title="Solicitar administración de sede"
+          <button
+            title="Solicitar administración de sede"
             class="sede-button"
             @click="representSede(sede)"
-            v-if="sede.status !=1"
           >
-            Representar
+            {{
+              sede.representativeStatus === 1 ?  "--------------" : "Representar"
+            }}
           </button>
         </div>
       </div>
-      <button @click="openSedeForm" v-if="selectedSpace && selectedSpace.status" >
+      <button
+        @click="openSedeForm"
+        v-if="selectedSpace && selectedSpace.status"
+      >
         Crear Nueva Sede
       </button>
       <div class="form-inputs" v-if="showSedeForm">
@@ -91,6 +104,7 @@ import UserSessionManager from "../UserSessionManager";
 export default {
   data() {
     return {
+      representativeStatus: null,
       isUniqueEntity: false,
       spaces: [],
       selectedSpace: null,
@@ -138,31 +152,31 @@ export default {
       this.showEntityForm = false;
     },
     createSede(data) {
-  fetch("http://localhost:8080/campus/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+      fetch("http://localhost:8080/campus/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (this.selectedSpace) {
+            this.selectedSpace.sedes.push(data);
+          }
+        })
+        .catch((error) => {
+          console.log(
+            "There was a problem submitting the new sede:",
+            error.message
+          );
+        });
     },
-    body: JSON.stringify(data),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (this.selectedSpace) {
-        this.selectedSpace.sedes.push(data);
-      }
-    })
-    .catch((error) => {
-      console.log(
-        "There was a problem submitting the new sede:",
-        error.message
-      );
-    });
-},
     showSuccessNotification(message) {
       this.showNotification = true;
       this.notificationMessage = message;
@@ -171,7 +185,7 @@ export default {
         this.notificationMessage = "";
       }, 2000);
     },
-    
+
     fetchSpaces() {
       fetch("http://localhost:8080/obligatory-spaces")
         .then((response) => {
@@ -183,7 +197,7 @@ export default {
         .then((data) => {
           this.spaces = data.map((space) => ({
             ...space,
-            estado: space.status === '1' ? "Aprobado" : "Pendiente",
+            estado: space.status === "1" ? "Aprobado" : "Pendiente",
             cuit: space.cuit,
           }));
         })
@@ -195,29 +209,58 @@ export default {
         });
     },
     fetchSedes(space) {
-  this.selectedSpace = space;
-  const userId = UserSessionManager.getSessionItem("id");
+      this.selectedSpace = space;
+      const userId = UserSessionManager.getSessionItem("id");
 
-  fetch(`http://localhost:8080/campus/${space.id}/sedes?userId=${userId}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Mapeo de datos para establecer el estado y la representación de cada sede.
-      this.selectedSpace.sedes = data.map(sede => ({
-        ...sede,
-        estado: sede.status === 1 ? "Aprobado" : "Pendiente",
-        isRepresented: localStorage.getItem(`sede-${sede.id}`) === "true" ? true : false
-      }));
-    })
-    .catch(error => {
-      console.log("There was a problem fetching sedes:", error.message);
-    });
-},
+      fetch(`http://localhost:8080/campus/${space.id}/sedes?userId=${userId}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Mapeo de datos para establecer el estado y la representación de cada sede.
+          this.selectedSpace.sedes = data.map((sede) => ({
+            ...sede,
+            estado: sede.status === 1 ? "Aprobado" : "Pendiente",
+            isRepresented:
+              localStorage.getItem(`sede-${sede.id}`) === "true" ? true : false,
 
+          }));
+          return this.fetchCampusRepresentativesState(this.selectedSpace);
+        })
+        .catch((error) => {
+          console.log("There was a problem fetching sedes:", error.message);
+        });
+    },
+    fetchCampusRepresentativesState(space) {
+      const userId = UserSessionManager.getSessionItem("id");
+
+      fetch(
+        `http://localhost:8080/campus/representatives/checkRepresentativeStatuses?userId=${userId}`
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          space.sedes.forEach((sede) => {
+            sede.representativeStatus = data[sede.id] || 0;
+            console.log(
+              " sede.representativeStatus " + sede.representativeStatus
+            );
+          });
+        })
+        .catch((error) => {
+          console.log(
+            "There was a problem fetching the representative statuses:",
+            error.message
+          );
+        });
+    },
 
     openEntityForm() {
       this.showEntityForm = true;
@@ -253,7 +296,7 @@ export default {
         .then((data) => {
           this.selectedSpace.sedes.push(data);
           this.showSedeForm = false;
-          console.log(this.showSedeForm)
+          console.log(this.showSedeForm);
           this.$router.push({
             name: "mySpaces",
             params: { id: UserSessionManager.getSessionItem("id") },
@@ -267,100 +310,100 @@ export default {
         });
     },
     submitEntity() {
-  fetch(`http://localhost:8080/obligatory-spaces/cuit/${this.newEntity.cuit}`)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else if (response.status === 404) {
-        return null;
-      } else {
-        throw new Error("Network response was not ok");
-      }
-    })
-    .then((data) => {
-      if (data) {
-        alert("Ya existe un espacio obligado con ese CUIT.");
-      } else {
-        const dataToSend = {
-          name: this.newEntity.name,
-          province: this.newEntity.province,
-          representativeId: UserSessionManager.getSessionItem("id"),
-          cuit: this.newEntity.cuit,
-        };
-
-        fetch("http://localhost:8080/obligatory-spaces/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSend),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
+      fetch(
+        `http://localhost:8080/obligatory-spaces/cuit/${this.newEntity.cuit}`
+      )
+        .then((response) => {
+          if (response.ok) {
             return response.json();
-          })
-          .then((data) => {
-            this.spaces.push(data);
-            this.showEntityForm = false;
-            this.$router.push({ name: "campus", params: { id: data.id } });
+          } else if (response.status === 404) {
+            return null;
+          } else {
+            throw new Error("Network response was not ok");
+          }
+        })
+        .then((data) => {
+          if (data) {
+            alert("Ya existe un espacio obligado con ese CUIT.");
+          } else {
+            const dataToSend = {
+              name: this.newEntity.name,
+              province: this.newEntity.province,
+              representativeId: UserSessionManager.getSessionItem("id"),
+              cuit: this.newEntity.cuit,
+            };
 
-            // Si isUniqueEntity es true, crear una sede con la misma información
-            if (this.isUniqueEntity) {
-              const sedeDataToSend = {
-                name: this.newEntity.name,
-                cuit: this.newEntity.cuit,
-                estado: false,
-                obligatorySpaceId: data.id,
-                representativeId: UserSessionManager.getSessionItem("id"),
-              };
-              
-              this.createSede(sedeDataToSend);
-              this.$router.push({ name: 'mySpaces' });
-            }
-            
-          })
-          .catch((error) => {
-            console.log(
-              "There was a problem submitting the new entity:",
-              error.message
-            );
-          });
-      }
-    })
-    .catch((error) => {
-      console.log("Error:", error.message);
-    });
-},
-    representSede(sede) {
-  const representativeId = UserSessionManager.getSessionItem("id");
+            fetch("http://localhost:8080/obligatory-spaces/create", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(dataToSend),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                this.spaces.push(data);
+                this.showEntityForm = false;
+                this.$router.push({ name: "campus", params: { id: data.id } });
 
-  const dataToSend = {
-    campusId: sede.id,
-    userId: representativeId,
-  };
+                // Si isUniqueEntity es true, crear una sede con la misma información
+                if (this.isUniqueEntity) {
+                  const sedeDataToSend = {
+                    name: this.newEntity.name,
+                    cuit: this.newEntity.cuit,
+                    estado: false,
+                    obligatorySpaceId: data.id,
+                    representativeId: UserSessionManager.getSessionItem("id"),
+                  };
 
-  fetch("http://localhost:8080/campus/representatives/add", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+                  this.createSede(sedeDataToSend);
+                  this.$router.push({ name: "mySpaces" });
+                }
+              })
+              .catch((error) => {
+                console.log(
+                  "There was a problem submitting the new entity:",
+                  error.message
+                );
+              });
+          }
+        })
+        .catch((error) => {
+          console.log("Error:", error.message);
+        });
     },
-    body: JSON.stringify(dataToSend),
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      // Establecer la sede como representada en el almacenamiento local.
-      localStorage.setItem(`sede-${sede.id}`, true);
-      sede.isRepresented = true;
-    })
-    .catch(error => {
-      console.log("Error while representing sede:", error.message);
-    });
-}
+    representSede(sede) {
+      const representativeId = UserSessionManager.getSessionItem("id");
 
+      const dataToSend = {
+        campusId: sede.id,
+        userId: representativeId,
+      };
+      console.log("data " + dataToSend)
+      fetch("http://localhost:8080/campus/representatives/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          // Establecer la sede como representada en el almacenamiento local.
+          localStorage.setItem(`sede-${sede.id}`, true);
+          sede.isRepresented = true;
+        })
+        .catch((error) => {
+          console.log("Error while representing sede:", error.message);
+        });
+    },
   },
   mounted() {
     this.fetchSpaces();
@@ -369,6 +412,13 @@ export default {
 </script>
 
 <style>
+.space {
+  width: 900px;
+}
+.CampusClass {
+  width: 700px;
+}
+
 .sede-button {
   padding: 4px 6px; /* Ajusta el padding del botón */
   font-size: 0.7rem;
@@ -386,7 +436,6 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 600px;
   margin: 0 auto;
   background-color: #2c3e50;
   border-radius: 8px;
@@ -422,6 +471,10 @@ export default {
   box-sizing: border-box;
   font-size: 0.8rem;
 }
+.sede-button:active {
+    transform: scale(0.95);  /* Esto hará que el botón se reduzca ligeramente al presionarse */
+    transition: transform 0.1s;  /* Efecto suave de transformación */
+}
 
 button {
   padding: 10px 15px;
@@ -431,6 +484,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-bottom: 10px;
 }
 
 button:hover {
