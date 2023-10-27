@@ -56,7 +56,6 @@ export default {
         })
           .then((response) => {
             if (!response.ok) {
-              // Transforma el error en una respuesta JSON para manejarlo en el siguiente 'then'
               return response.json().then((err) => {
                 throw err;
               });
@@ -67,17 +66,18 @@ export default {
             if (data.error) {
               console.log("Inicio de sesión fallido:", data.error);
             } else if (data.data && data.data.email) {
-
               console.log("Inicio de sesión exitoso");
               this.$emit("authenticated", true);
-              this.$store.dispatch('authenticate', true);
-              localStorage.setItem("email", JSON.stringify({ email: this.input.email }));
-
-              UserSessionManager.setSessionData({
-                email: data.data.email, 
-                roles: data.data.roles, 
-                id: data.data.id, 
+              this.$store.dispatch("authenticate", {
+                isAuthenticated: true,
+                email: data.data.email,
               });
+              UserSessionManager.setSessionData({
+                email: data.data.email,
+                roles: data.data.roles,
+                id: data.data.id,
+              });
+              this.$root.$emit('userLoggedIn', data.data);
               this.$router.push("/myhome");
               console.log(UserSessionManager.getSessionData());
             }
@@ -108,13 +108,13 @@ export default {
   width: 600px;
   margin: 0 auto;
 
-  background-color: #2c3e50; /* Un color oscuro de fondo */
+  background-color: #2c3e50;
 
-  border-radius: 8px; /* Bordes redondeados */
+  border-radius: 8px;
 
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); /* Sombra para darle profundidad */
 
-  padding: 2rem; /* Padding alrededor del contenido */
+  padding: 2rem;
 }
 
 #login h1 {
