@@ -13,9 +13,14 @@ class UserSessionManager {
     // Obtener datos de sesión
     getSessionData() {
         const sessionData = localStorage.getItem(this.SESSION_KEY);
-        return sessionData ? JSON.parse(sessionData) : null;
+        try {
+            return sessionData ? JSON.parse(sessionData) : null;
+        } catch (error) {
+            console.error("Error al parsear datos de sesión:", error);
+            return null;
+        }
     }
-
+    
     // Establecer un dato específico de la sesión (por clave)
     setSessionItem(key, value) {
         const sessionData = this.getSessionData() || {};

@@ -77,7 +77,7 @@
             roles: data.data.roles, 
             id: data.data.id, 
         });
- 
+        this.$root.$emit('userLoggedIn', data.data);
         if (data.data.roles.includes("ADMIN")) {
             this.$router.push("/adminManagment");
         } else if (data.data.roles.includes("CERT")) {

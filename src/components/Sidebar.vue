@@ -84,24 +84,25 @@
 </template>
 
 <script setup>
-
-
-
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import logoURL from "../assets/logo.png";
 import userSessionManager from "../UserSessionManager";
+import { useStore } from "vuex";
 
+
+const store = useStore();
+
+// Estados Reactivos
 const is_expanded = ref(localStorage.getItem("is_expanded") === "true");
 const userRoles = ref([]);
-const isLoggedIn = ref(false); 
+const isLoggedIn = computed(() => store.state.isAuthenticated);
+const showLogoutPopup = ref(false);
 
+// Métodos y funciones
 const fetchUserRoles = () => {
   const session = userSessionManager.getSessionData();
   if (session && session.roles) {
     userRoles.value = session.roles;
-    isLoggedIn.value = true;
-  } else {
-    isLoggedIn.value = false;
   }
 };
 
@@ -110,8 +111,6 @@ const ToggleMenu = () => {
   localStorage.setItem("is_expanded", is_expanded.value);
 };
 
-const showLogoutPopup = ref(false);
-
 const ToggleLogoutPopup = () => {
   showLogoutPopup.value = !showLogoutPopup.value;
 };
@@ -119,11 +118,12 @@ const ToggleLogoutPopup = () => {
 const handleLogout = () => {
   showLogoutPopup.value = false;
   userSessionManager.clearSession();
-  isLoggedIn.value = false;
+  store.commit('SET_AUTHENTICATED', false);
 };
 
-
+// Ciclo de vida del componente
 onMounted(fetchUserRoles);
+
 </script>
 
 <style lang="scss" scoped>
