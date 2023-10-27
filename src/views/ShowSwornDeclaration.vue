@@ -52,41 +52,9 @@
       </div>
 
       <div class="button-group">
-        <button
-          type="button"
-          @click="showConfirmationDialog = true"
-          class="accept-button"
-        >
-          Aceptar
-        </button>
+        <button type="button" @click="sendRequest" class="accept-button">Aceptar</button>
+        <button @click="rejectRequest" class="cancel-button">Rechazar</button>
         <button @click="cancel" class="cancel-button">Cancelar</button>
-      </div>
-      <div v-if="showConfirmationDialog" class="confirmation-dialog">
-        <div class="confirmation-content">
-          <p>
-            ¿Está seguro que quiere aceptar la declaración jurada con los
-            siguientes datos?
-          </p>
-          <ul>
-            <li v-if="!declaration.hasTrainedStaff">
-              No cuenta con personal capacitado
-            </li>
-            <li v-if="!declaration.hasAppropriateSignage">
-              No tiene señalítica adecuada
-            </li>
-            <li v-if="!declaration.hasSuddenDeathProtocol">
-              No tiene protocolo de acción en caso de muerte súbita
-            </li>
-            <li v-if="!declaration.hasMedicalEmergencySystem">
-              No tiene sistema de emergencia médica
-            </li>
-            <li v-if="declaration.deaCount === 0">Cantidad de DEAs es 0</li>
-          </ul>
-          <div class="button-group">
-            <button @click="sendRequest" class="accept-button">Aceptar</button>
-            <button @click="cancel" class="cancel-button">Cancelar</button>
-          </div>
-        </div>
       </div>
     </form>
     <!-- Notificación personalizada -->
@@ -172,6 +140,35 @@ export default {
         }
 
         this.showSuccessNotification = true;
+
+        setTimeout(() => {
+          this.$router.go(-1);
+        }, 2000);
+      } catch (error) {
+        console.error("Error updating declaration and campus status:", error);
+      }
+    },
+    async rejectRequest() {
+      const declarationId = this.declaration.id;
+      const campusId = this.declaration.campusId;
+      const updatedDeclaration = {
+        ...this.declaration,
+      };
+      try {
+        const declarationResponse = await fetch(
+          "http://localhost:8080/documentation/rejectDeclarationStatus",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedDeclaration),
+          }
+        );
+
+        if (!declarationResponse.ok) {
+          throw new Error(`HTTP error! Status: ${declarationResponse.status}`);
+        }
 
         setTimeout(() => {
           this.$router.go(-1);
