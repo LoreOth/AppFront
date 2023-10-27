@@ -36,6 +36,16 @@ const router = createRouter({
 			component: () => import('../views/SwornDeclaration.vue')
 		  },
 		  {
+			path: '/visits/:campusId',
+			name: 'visits',
+			component: () => import('../views/Visits.vue')
+		  },
+		  {
+			path: '/suddenDeath/:campusId',
+			name: 'suddenDeath',
+			component: () => import('../views/SuddenDeath.vue')
+		  },
+		  {
 			path: '/mySpaces',
 			name: 'mySpaces',
 			component: () => import('../views/MySpaces.vue')

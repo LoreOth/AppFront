@@ -43,6 +43,13 @@
           >
            MS
           </button>
+          <button
+            v-if="campus.status != 1"
+            title="Ver visitas en la sede"
+            @click.stop="redirectVisit(campus.id)"
+          >
+           Visitas
+          </button>
         </div>
       </div>
       <div class="column">{{ campus.statusName }}</div>
@@ -127,6 +134,15 @@ export default {
         );
       }
     },
+    redirectVisit(campusId) {
+      console.log("Selected Campus ID for visits info:" + campusId);
+    this.$router.push({ name: 'visits', params: { campusId: campusId }});
+  },
+
+    redirectSuddenDeath(campusId) {
+      console.log("Selected Campus ID for SuddenDeath:" + campusId);
+    this.$router.push({ name: 'suddenDeath', params: { campusId: campusId }});
+  },
     selectCampus(campus) {
       this.selectedCampus = campus;
     },
