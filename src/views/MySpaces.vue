@@ -243,6 +243,19 @@ button:hover {
   padding: 0 1rem;
   text-align: center;
 }
+.action-buttons button {
+  width: 50px;  /* Adjust as needed */
+  height: 35px; /* Adjust as needed */
+  font-size: 0.7rem; /* Adjust as needed */
+  margin-right: 5px; /* Adjust as needed */
+  text-align: center; 
+  padding: 1px;
+}
+
+/* Remove the margin for the last button so it doesn't add extra space to the end */
+.action-buttons button:last-child {
+  margin-right: 0; 
+}
 
 .header-row .column {
   font-weight: bold;

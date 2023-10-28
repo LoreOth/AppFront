@@ -2,6 +2,7 @@
     <div id="login">
       <div class="login-box">
         <h1>Acceso administrativo</h1>
+        <h2>Administrador provincial o usuario certificante</h2>
         <div class="form-inputs">
           <label for="email">Email</label>
           <input
@@ -95,72 +96,72 @@
   </script>
   
   <style>
-  #login {
+#login {
     display: flex;
     flex-direction: column;
-  
     justify-content: center;
-  
     align-items: center;
     height: 100vh;
-    width: 600px;
-  
-    width: 600px;
+    width: 700px;
     margin: 0 auto;
-  
-    background-color: #2c3e50; /* Un color oscuro de fondo */
-  
-    border-radius: 8px; /* Bordes redondeados */
-  
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); /* Sombra para darle profundidad */
-  
-    padding: 2rem; /* Padding alrededor del contenido */
-  }
-  
-  #login h1 {
-    color: #ecf0f1; /* Color claro para el título */
-    margin-bottom: 1rem; /* Espaciado debajo del título */
-  
-    font-weight: bold; /* Texto en negrita */
-  }
-  
-  #login .form-inputs {
+    background-color: #34495e; /* Color más neutral */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+#login h1, #login h2 {
+    color: #ecf0f1;
+    margin-bottom: 1.5rem;
+    align-content: center;
+    font-weight: 500; /* No tan negrita */
+}
+
+#login h1 {
+    font-size: 1.7rem;
+}
+
+#login h2 {
+    font-size: 1.3rem;
+}
+
+#login .form-inputs {
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
     padding-bottom: 10px;
-  }
-  
-  #login .form-inputs label {
-    padding-right: 10px;
-    display: block; /* Hacer que el label sea un bloque para que ocupe toda la línea */
-  
-    color: #bdc3c7; /* Color más claro para el label */
-  
-    margin-bottom: 0.5rem; /* Espaciado entre el label y el input */
-  }
-  
-  #login .form-inputs input {
+}
+
+#login .form-inputs label {
+    display: block;
+    color: #bdc3c7;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+#login .form-inputs input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #7f8c8d; /* Borde neutral */
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #ecf0f1;
+    color: #2c3e50;
     box-sizing: border-box;
-  }
-  button {
-    padding: 10px 15px;
-  
-    background-color: #8e44ad; /* Color de fondo del botón */
-  
-    color: #ecf0f1; /* Color del texto del botón */
-  
+}
+
+button {
+    padding: 8px 12px;
+    background-color: #7f8c8d; /* Color más neutral */
+    color: #ecf0f1;
     border: none;
-  
-    border-radius: 4px; /* Bordes redondeados para el botón */
-  
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s; /* Transición suave para el hover del botón */
-  }
-  
-  button:hover {
-    background-color: #9b59b6; /* Color de fondo más claro en hover */
-  }
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #95a5a6; /* Un poco más claro en hover */
+}
+
   </style>

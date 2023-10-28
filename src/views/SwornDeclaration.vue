@@ -144,8 +144,10 @@ export default {
         if (!response.ok) {
           this.error = "Error al enviar los datos.";
         } else {
+
         }
       }
+      this.$router.go(-1);
     },
     async fetchCampusDeas(campusId) {
       const response = await fetch(

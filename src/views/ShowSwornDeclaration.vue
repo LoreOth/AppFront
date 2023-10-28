@@ -187,102 +187,73 @@ export default {
 
 <style scoped>
 .declaration-details {
-  background-color: #f7f7f7;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  text-align: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem; /* Disminuir el padding */
+  width: 90%; /* Ajuste de ancho al 90% */
+  max-width: 600px;
+  margin: 1rem auto;
 }
 
 .declaration-details h1 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 1rem;
+  font-size: 2rem; /* Tamaño de fuente reducido */
+  color: #2C3E50;
+  margin-bottom: 1rem; /* Margen inferior reducido */
+  text-align: left;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; /* Margen inferior reducido */
 }
 
 .form-group label {
-  font-weight: bold;
-  color: #666;
-}
-
-.form-group .answer {
-  font-weight: bold;
-  color: #4caf50; /* Verde para respuestas afirmativas */
+  font-weight: 600;
+  color: #34495E;
+  margin-bottom: 0.5rem;
 }
 
 .button-group {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2rem;
+  flex-direction: row; /* Cambiado de column a row */
+  align-items: center; /* Centra los botones verticalmente */
+  justify-content: space-between; /* Distribuye los botones uniformemente */
+  gap: 0.5rem; /* Espaciado entre botones */
 }
 
+
+/* Estilo base para botones */
 .accept-button,
 .cancel-button {
-  padding: 10px 20px;
-  border: none;
+  padding: 8px 16px;
   border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.3s;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  margin: 0; 
+background-color: #8e44ad;
+  color: white; /* Color de texto blanco para contraste */
+  border: none; /* Eliminar bordes por defecto */
+  cursor: pointer; /* Cambiar el cursor a mano al pasar sobre el botón */
 }
 
-.accept-button {
-  background-color: #4caf50; /* Verde para botón de aceptar */
-  color: #fff;
+/* Efecto al hacer clic en el botón */
+.accept-button:active,
+.cancel-button:active {
+  transform: scale(0.95); /* Reducir el tamaño ligeramente al presionar */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra más suave para dar efecto de presión */
 }
 
-.cancel-button {
-  background-color: #f44336; /* Rojo para botón de cancelar */
-  color: #fff;
-}
 
-.button-group button:hover {
-  transform: scale(1.05);
-}
-
-.confirmation-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.confirmation-content {
-  background-color: #fff;
-  padding: 20px;
+.notification {
+  margin-top: 1rem; /* Margen superior reducido */
+  padding: 1rem;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
-}
-
-.confirmation-content p {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-
-.confirmation-content ul {
-  list-style: none;
-  padding: 0;
-}
-
-.confirmation-content li {
-  color: #f44336; /* Rojo para elementos de lista de confirmación */
+  color: #fff;
   font-weight: bold;
-  margin: 0.5rem 0;
+  font-size: 1rem; /* Tamaño de fuente reducido para la notificación */
 }
+
+/* Resto de estilos permanecen igual */
 </style>
