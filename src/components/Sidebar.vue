@@ -52,6 +52,10 @@
         <span class="material-icons">group</span>
         <span class="text">Mis espacios</span>
       </router-link>
+      <router-link  v-if="userRoles.includes('USER')" to="/myHome" class="button">
+        <span class="material-icons">description</span>
+        <span class="text">Mis datos</span>
+      </router-link>
       <router-link
         v-if="isLoggedIn"
         to="/"

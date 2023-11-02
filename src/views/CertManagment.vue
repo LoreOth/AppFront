@@ -154,9 +154,9 @@ viewDeclaration(declaration) {
 }
 
 .certificante h1,
-.certificante h2 {
+.certificante h2,
+.certificante tbody td {
   color: #ecf0f1;
-  margin-bottom: 1rem;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -201,17 +201,52 @@ viewDeclaration(declaration) {
 
 .certificante button {
   padding: 10px 15px;
-  background-color: #e74c3c;
+  background-color: #8e44ad; /* Color violeta */
   color: #ecf0f1;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
   font-weight: bold;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 .certificante button:hover {
-  background-color: #c0392b;
+  background-color: #9b59b6; /* Tono de violeta más claro al pasar el mouse */
   transform: scale(1.05);
 }
+
+.certificante tbody td {
+  padding: 10px 0; /* Añadir un poco de padding arriba y abajo */
+}
+
+/* Asegurarse de que todos los botones en .certificante tengan el mismo estilo */
+.certificante tbody button,
+.certificante button {
+  padding: 10px 15px;
+  background-color: #8e44ad;
+  color: #ecf0f1;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  font-weight: bold;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  width: 100%; /* Esto asegurará que los botones se estiren al ancho disponible, manteniendo el mismo tamaño */
+  text-align: center;
+}
+
+.certificante tbody button:hover,
+.certificante button:hover {
+  background-color: #9b59b6;
+  transform: scale(1.05);
+}
+
+/* Alinear el botón "Ver" con el texto */
+.certificante tbody td {
+  display: flex;
+  justify-content: space-between; /* Esto empujará el botón hacia la derecha y el texto hacia la izquierda */
+  align-items: center; /* Esto asegurará que el botón y el texto estén alineados verticalmente */
+}
+
 </style>

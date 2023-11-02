@@ -1,21 +1,23 @@
 <template>
     <footer>
-      <p>© 2023 My App</p>
-      <!-- Agrega más contenido al footer aquí si lo deseas -->
+      <p>©Assisted cardio system</p>
     </footer>
   </template>
   
   <script>
   export default {
-    name: "AppFooter", // Es una buena práctica nombrar el componente
+    name: "AppFooter", 
   };
   </script>
   
   <style>
 footer {
-    height: 80px; /* Ajusta este valor según tus necesidades para la altura del header */
+    height: 80px; 
     display: flex;
-    align-items: center; /* Centra verticalmente el contenido */
-    justify-content: center; /* Centra horizontalmente el contenido */
+    align-items: center; 
+    justify-content: center; 
+    font-size: 17px; 
+    font-weight: bold; 
+    color: blueviolet;
 }
   </style>

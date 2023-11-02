@@ -1,6 +1,6 @@
 <template>
   <div class="space" id="spaces">
-    <h1>Espacios Obligados</h1>
+    <h1>Entidades</h1>
 
     <div class="header-row">
       <div class="column">Nombre</div>

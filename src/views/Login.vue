@@ -1,6 +1,6 @@
 <template>
   <div id="login">
-    <div class="login-box">
+      <div class="login-box" v-if="!loggedIn">
       <h1>Login</h1>
       <div class="form-inputs">
         <label for="email">Email</label>
@@ -24,6 +24,9 @@
       </div>
       <button type="button" v-on:click="login()">Login</button>
     </div>
+    <div v-if="loggedIn" class="welcome-message">
+      ¡Bienvenido!
+    </div>
   </div>
 </template>
 
@@ -39,6 +42,7 @@ export default {
         password: "",
         roles: [],
       },
+      loggedIn: false
     };
   },
   methods: {
@@ -78,8 +82,8 @@ export default {
                 id: data.data.id,
               });
               this.$root.$emit('userLoggedIn', data.data);
-              this.$router.push("/myhome");
               console.log(UserSessionManager.getSessionData());
+              this.loggedIn = true;
             }
           })
           .catch((error) => {
@@ -122,6 +126,14 @@ export default {
   margin-bottom: 1rem; /* Espaciado debajo del título */
 
   font-weight: bold; /* Texto en negrita */
+}
+
+/* Puedes agregar estilos para el mensaje de bienvenida si es necesario */
+.welcome-message {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 50px;
+  color: white;
 }
 
 #login .form-inputs {

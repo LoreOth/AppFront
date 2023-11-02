@@ -69,7 +69,6 @@
       <button type="submit" class="validate-button">Validar</button>
       <button
         @click="sendFormData"
-        :disabled="!isFormValid"
         class="validate-button"
       >
         Aceptar
@@ -93,7 +92,6 @@ export default {
       error: null,
       campusDeas: [], // fetched from API
       actualDeaCount: 0,
-      isFormValid: false,
     };
   },
   computed: {
@@ -126,7 +124,6 @@ export default {
         maintenanceStaff: this.form.maintenanceStaff,
       };
 
-      if (this.isFormValid) {
         const response = await fetch(
           "http://localhost:8080/documentation/SwornDeclarationSave",
           {
@@ -146,7 +143,7 @@ export default {
         } else {
 
         }
-      }
+      
       this.$router.go(-1);
     },
     async fetchCampusDeas(campusId) {
@@ -163,9 +160,7 @@ export default {
       if (!this.isDeaCountValid) {
         this.error =
           "La cantidad de DEAs ingresada no coincide con la base de datos.";
-        this.isFormValid = false;
       } else {
-        this.isFormValid = true;
         alert("Validación exitosa, puede aceptar.");
       }
     },

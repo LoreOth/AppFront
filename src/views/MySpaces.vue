@@ -82,6 +82,11 @@ export default {
     }
     this.campuses = await response.json();
 
+    this.campuses.forEach(campus => {
+    console.log(campus);
+});
+
+
     // Mover el bucle forEach aquí
     for (const campus of this.campuses) {
       await this.loadStatusName(campus);
@@ -100,8 +105,10 @@ export default {
       }
       const statusName = await response.text();
 
-      // Asignar el nombre del estado al campus
+      
       campus.statusName = statusName;
+
+      console.log("campus.statusName "+campus.statusName)
     } catch (error) {
       console.error("Error fetching status name", error);
     }

@@ -9,6 +9,7 @@
           type="checkbox"
           v-model="declaration.hasTrainedStaff"
           id="hasTrainedStaff"
+          readonly
         />
       </div>
       <div class="form-group">
@@ -17,6 +18,7 @@
           type="checkbox"
           v-model="declaration.hasAppropriateSignage"
           id="hasAppropriateSignage"
+          readonly
         />
       </div>
       <div class="form-group">
@@ -27,6 +29,7 @@
           type="checkbox"
           v-model="declaration.hasSuddenDeathProtocol"
           id="hasSuddenDeathProtocol"
+          readonly
         />
       </div>
       <div class="form-group">
@@ -37,6 +40,7 @@
           type="checkbox"
           v-model="declaration.hasMedicalEmergencySystem"
           id="hasMedicalEmergencySystem"
+          readonly
         />
       </div>
       <div class="form-group">
@@ -52,7 +56,9 @@
       </div>
 
       <div class="button-group">
-        <button type="button" @click="sendRequest" class="accept-button">Aceptar</button>
+        <button type="button" @click="sendRequest" class="accept-button">
+          Aceptar
+        </button>
         <button @click="rejectRequest" class="cancel-button">Rechazar</button>
         <button @click="cancel" class="cancel-button">Cancelar</button>
       </div>
@@ -198,7 +204,7 @@ export default {
 
 .declaration-details h1 {
   font-size: 2rem; /* Tamaño de fuente reducido */
-  color: #2C3E50;
+  color: #2c3e50;
   margin-bottom: 1rem; /* Margen inferior reducido */
   text-align: left;
 }
@@ -211,7 +217,7 @@ export default {
 
 .form-group label {
   font-weight: 600;
-  color: #34495E;
+  color: #34495e;
   margin-bottom: 0.5rem;
 }
 
@@ -223,7 +229,6 @@ export default {
   gap: 0.5rem; /* Espaciado entre botones */
 }
 
-
 /* Estilo base para botones */
 .accept-button,
 .cancel-button {
@@ -231,8 +236,8 @@ export default {
   border-radius: 5px;
   font-size: 1rem;
   transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-  margin: 0; 
-background-color: #8e44ad;
+  margin: 0;
+  background-color: #8e44ad;
   color: white; /* Color de texto blanco para contraste */
   border: none; /* Eliminar bordes por defecto */
   cursor: pointer; /* Cambiar el cursor a mano al pasar sobre el botón */
@@ -244,7 +249,6 @@ background-color: #8e44ad;
   transform: scale(0.95); /* Reducir el tamaño ligeramente al presionar */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra más suave para dar efecto de presión */
 }
-
 
 .notification {
   margin-top: 1rem; /* Margen superior reducido */
