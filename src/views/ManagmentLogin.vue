@@ -79,7 +79,7 @@
             id: data.data.id, 
         });
         this.$root.$emit('userLoggedIn', data.data);
-        if (data.data.roles.includes("ADMIN")) {
+        if (data.data.roles.includes("PROV")) {
             this.$router.push("/adminManagment");
         } else if (data.data.roles.includes("CERT")) {
             this.$router.push("/certManagment");

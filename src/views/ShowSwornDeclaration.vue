@@ -87,17 +87,7 @@ export default {
   },
   methods: {
     async onSubmit() {
-      if (
-        !this.declaration.hasTrainedStaff ||
-        !this.declaration.hasAppropriateSignage ||
-        !this.declaration.hasSuddenDeathProtocol ||
-        !this.declaration.hasMedicalEmergencySystem ||
-        this.declaration.deaCount === 0
-      ) {
-        this.showConfirmationDialog = true;
-      } else {
         await this.sendRequest();
-      }
     },
     acceptDeclaration() {
       this.sendRequest();

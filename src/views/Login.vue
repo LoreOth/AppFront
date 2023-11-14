@@ -1,6 +1,6 @@
 <template>
   <div id="login">
-      <div class="login-box" v-if="!loggedIn">
+    <div class="login-box" v-if="!loggedIn">
       <h1>Login</h1>
       <div class="form-inputs">
         <label for="email">Email</label>
@@ -97,6 +97,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 #login {

@@ -1,33 +1,31 @@
 <template>
   <header>
-    <div v-if="isLoggedIn" class="user-email">
-     {{ userRole }}
+    <div v-if="isLoggedIn">
+      {{ userEmail }}
     </div>
   </header>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import userSessionManager from "../UserSessionManager";
+
 export default {
   data() {
     return {
-      userEmail: '',
-      userRole: ''
+      userEmail: ''
     }
   },
   computed: {
     ...mapState(['isAuthenticated'])
   },
   mounted() {
-    const session = userSessionManager.getSessionData();
-    console.log("session " +session)
-    console.log("session.roles " +session.roles)
-  if (session && session.roles) {
-    this.userRole = session.roles;
+    const sessionData = localStorage.getItem("email");
+    console.log("sessionData " + sessionData);
+    if (sessionData) {
+      const data = JSON.parse(sessionData);
+      this.userEmail = data.email || "";
+    }
   }
-}
-
 };
 </script>
 
@@ -42,6 +40,6 @@ header {
 
 .user-email {
   font-size: 14px;
-  color: #fcf9f9;
+  color: #333;
 }
 </style>

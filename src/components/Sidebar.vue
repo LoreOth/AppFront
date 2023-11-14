@@ -44,7 +44,7 @@
         <span class="material-icons">login</span>
         <span class="text">Registrar Administrador Provincial / Certificante</span>
       </router-link>
-      <router-link  v-if="userRoles.includes('ADMIN_PROV')" to="/requests" class="button">
+      <router-link  v-if="userRoles.includes('PROV')" to="/requests" class="button">
         <span class="material-icons">description</span>
         <span class="text">Solicitudes</span>
       </router-link>

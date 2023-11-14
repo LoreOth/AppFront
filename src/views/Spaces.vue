@@ -84,7 +84,7 @@
       </div>
       <button
         @click="openSedeForm"
-        v-if="selectedSpace && selectedSpace.status"
+        v-if="selectedSpace"
       >
         Crear Nueva Sede
       </button>

@@ -26,7 +26,7 @@
         >
       </div>
     </div>
-    <button @click="fetchData">Consultar</button>
+    <button @click="fetchData" class="white-text">Consultar</button>
     <div v-for="campus in campuses" :key="campus.campusId" class="campus-item">
       {{ campus.campusName }} ({{ campus.campusProvince }}) -
       {{ campus.representativeFirstName }} {{ campus.representativeLastName }}
@@ -168,7 +168,9 @@ export default {
 .admin h2 {
   font-size: 1rem;
 }
-
+.white-text {
+  color: white; 
+}
 .admin .form-group {
   width: 100%;
   margin-bottom: 1rem;
@@ -214,4 +216,24 @@ export default {
   background-color: #c0392b;
   transform: scale(1.05);
 }
+
+.admin button {
+  padding: 10px 15px;
+  background-color: #8e44ad; /* Color de fondo cambiado a violeta */
+  color: #ecf0f1;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  font-weight: bold;
+}
+
+.admin button:hover {
+  background-color: #7a1de2;
+}
+.admin .campus-item {
+  color: #FFFFFF; /* Color del texto cambiado a blanco */
+}
+
+
 </style>

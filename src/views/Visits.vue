@@ -11,9 +11,10 @@
       </thead>
       <tbody>
         <tr v-for="visit in visits" :key="visit.createdDate">
-          <td>{{ visit.createdDate }}</td>
-          <td>{{ visit.visitStatus ? "Aprobado" : "Rechazado" }}</td>
-        </tr>
+        <td>{{ visit.createdDate }}</td>
+        <td>{{ visit.visitStatus ? "Aprobado" : "Rechazado" }}</td>
+        <td><button @click="deleteVisit(visit.createdDate)">Eliminar</button></td>
+    </tr>
       </tbody>
     </table>
 
@@ -47,7 +48,6 @@ export default {
   }
   this.fetchVisitData();
 },
-
   methods: {
     async fetchVisitData() {
   try {
@@ -73,7 +73,10 @@ export default {
   }
 },
 
-
+deleteVisit(dateToDelete) {
+        this.visits = this.visits.filter(visit => visit.createdDate !== dateToDelete);
+        localStorage.setItem("visits", JSON.stringify(this.visits));
+    },
 
 
     goBack() {

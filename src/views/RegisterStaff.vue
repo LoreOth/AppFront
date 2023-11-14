@@ -45,7 +45,7 @@
         <label>Tipo de usuario:</label>
         <select v-model="form.userType">
           <option value="CERT">Certificante</option>
-          <option value="ADMIN">Administrador Provincial</option>
+          <option value="PROV">Administrador Provincial</option>
         </select>
       </div>
       <button type="submit">Registrar</button>
